@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0F1C63690E5886AD466AF1A2 /* LikedArticlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5385A64CD7C1928C183F2C /* LikedArticlesView.swift */; };
 		0FC86366D4CC88CB9C3313B7 /* Date+TimeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF94542519B5FBCE2563FF7B /* Date+TimeAgo.swift */; };
+		2832E9B20CCF2B53288EBB0C /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF0783074E2338841F8C758 /* SignInView.swift */; };
 		3034E9CB4F7497D06389D532 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A99C1D315110BC337799D06 /* Assets.xcassets */; };
 		458138575523525C5F6B066F /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF74DA337E2399893E07A2A /* MockData.swift */; };
 		4A66D1A2A7A7EF15D64B2287 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE79F853E9F4C2C6DE90197C /* SettingsView.swift */; };
@@ -24,10 +25,12 @@
 		A8AB2739E24E228B7D367A25 /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF25ED7B805869EBA42C2A29 /* Article.swift */; };
 		B0E0B9B47E48775E06425823 /* ArticleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA3F8B7F6084DDA8A00E337 /* ArticleCard.swift */; };
 		CAF6FCBD0DE7822C0703B1AA /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87E9497BE4FDA1CC03489F7 /* FeedView.swift */; };
+		D40304BAE2B076B411869FFE /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0406A39D89EE5FB6F2D10382 /* AuthStore.swift */; };
 		F6D100ED0FFE934E0904B612 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD0313E552AD155DABE0A5A /* MainTabView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0406A39D89EE5FB6F2D10382 /* AuthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStore.swift; sourceTree = "<group>"; };
 		0AD0313E552AD155DABE0A5A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		0CA1A41EEACD4A5F8B988A9E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		2F84829DF21160A640019E93 /* NighthawkNews.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NighthawkNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -41,6 +44,7 @@
 		A716FAB66AFCCCF8EA24D8B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B28B81ABD70890F566EDD7E4 /* CategoryFilterBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryFilterBar.swift; sourceTree = "<group>"; };
 		C6810A9CCB07663DB2CAFA35 /* ArticleStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleStore.swift; sourceTree = "<group>"; };
+		CAF0783074E2338841F8C758 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		CE79F853E9F4C2C6DE90197C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		CF25ED7B805869EBA42C2A29 /* Article.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Article.swift; sourceTree = "<group>"; };
 		D3B8AAAC8E42683D52ABB2C9 /* AsyncImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncImageView.swift; sourceTree = "<group>"; };
@@ -51,6 +55,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		00C7386DD713EFDADD58F509 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				0406A39D89EE5FB6F2D10382 /* AuthStore.swift */,
+				CAF0783074E2338841F8C758 /* SignInView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
 		39E45507A5EF1CF4A842894A /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -97,6 +110,7 @@
 				8A99C1D315110BC337799D06 /* Assets.xcassets */,
 				A716FAB66AFCCCF8EA24D8B1 /* Info.plist */,
 				780F6D799F81F218ABC40F5B /* NighthawkApp.swift */,
+				00C7386DD713EFDADD58F509 /* Auth */,
 				AFBCB4838F5B1490377A1441 /* Extensions */,
 				3BE2570F554BD0D88740FF63 /* Models */,
 				764DAD193D1B8ED7EFEC7F23 /* Views */,
@@ -226,6 +240,7 @@
 				5ABAE7A6587D4790D582C894 /* ArticleListView.swift in Sources */,
 				66908D4915629A7493E5A527 /* ArticleStore.swift in Sources */,
 				6D614783104CCE354FE4BEF0 /* AsyncImageView.swift in Sources */,
+				D40304BAE2B076B411869FFE /* AuthStore.swift in Sources */,
 				8C8895AF589DF4A1B1E717E8 /* CategoryFilterBar.swift in Sources */,
 				0FC86366D4CC88CB9C3313B7 /* Date+TimeAgo.swift in Sources */,
 				78681EFA614979A838F0829D /* FeedCardView.swift in Sources */,
@@ -236,6 +251,7 @@
 				458138575523525C5F6B066F /* MockData.swift in Sources */,
 				657B12F0EBA76F7D7BE4688A /* NighthawkApp.swift in Sources */,
 				4A66D1A2A7A7EF15D64B2287 /* SettingsView.swift in Sources */,
+				2832E9B20CCF2B53288EBB0C /* SignInView.swift in Sources */,
 				886F23938BAFB4ABAA63E1E1 /* ViewedArticlesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
