@@ -26,6 +26,7 @@
 		B0E0B9B47E48775E06425823 /* ArticleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA3F8B7F6084DDA8A00E337 /* ArticleCard.swift */; };
 		CAF6FCBD0DE7822C0703B1AA /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87E9497BE4FDA1CC03489F7 /* FeedView.swift */; };
 		D40304BAE2B076B411869FFE /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0406A39D89EE5FB6F2D10382 /* AuthStore.swift */; };
+		EA0FB97550BAA92C046B46AD /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = DB0253AD851E182398C68FA2 /* GoogleSignIn */; };
 		F6D100ED0FFE934E0904B612 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD0313E552AD155DABE0A5A /* MainTabView.swift */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +54,17 @@
 		EF94542519B5FBCE2563FF7B /* Date+TimeAgo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+TimeAgo.swift"; sourceTree = "<group>"; };
 		F463957564BD7573D55BFB10 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BF4F7FBDF48A5F6EA3CEF5E5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA0FB97550BAA92C046B46AD /* GoogleSignIn in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		00C7386DD713EFDADD58F509 /* Auth */ = {
@@ -172,6 +184,7 @@
 			buildPhases = (
 				019FFF77494ED2EFF2EC4F58 /* Sources */,
 				E70C377933C414CB47C9A09A /* Resources */,
+				BF4F7FBDF48A5F6EA3CEF5E5 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -179,6 +192,7 @@
 			);
 			name = NighthawkNews;
 			packageProductDependencies = (
+				DB0253AD851E182398C68FA2 /* GoogleSignIn */,
 			);
 			productName = NighthawkNews;
 			productReference = 2F84829DF21160A640019E93 /* NighthawkNews.app */;
@@ -208,6 +222,9 @@
 			);
 			mainGroup = EC0E51DEB5CE6FC20CD90768;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EFAEE6608D0300A0DFA57918 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A00D89B4576753410B32569A /* Products */;
 			projectDirPath = "";
@@ -442,6 +459,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EFAEE6608D0300A0DFA57918 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DB0253AD851E182398C68FA2 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EFAEE6608D0300A0DFA57918 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EC7C1304EA4A8C6D9BE0DD49 /* Project object */;
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import GoogleSignIn
 
 struct SignInView: View {
     @EnvironmentObject var auth: AuthStore
@@ -8,12 +9,11 @@ struct SignInView: View {
     @State private var showPassword: Bool = false
     @State private var errorMessage: String = ""
     @State private var isLoading: Bool = false
+    @State private var isGoogleLoading: Bool = false
     @State private var shake: Bool = false
-    @State private var showGoogleStub: Bool = false
 
     var body: some View {
         ZStack {
-            // Background
             Color(uiColor: .systemGroupedBackground)
                 .ignoresSafeArea()
 
@@ -27,7 +27,7 @@ struct SignInView: View {
                             .padding(.top, 72)
 
                         Text("Nighthawk")
-                            .font(.system(size: 36, weight: .black, design: .default))
+                            .font(.system(size: 36, weight: .black))
                             .foregroundStyle(Color.primary)
 
                         Text("News that actually grabs you.")
@@ -129,8 +129,7 @@ struct SignInView: View {
                         } label: {
                             ZStack {
                                 if isLoading {
-                                    ProgressView()
-                                        .tint(.white)
+                                    ProgressView().tint(.white)
                                 } else {
                                     Text("Sign In")
                                         .font(.headline)
@@ -142,40 +141,38 @@ struct SignInView: View {
                             .background(Color.accentColor)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
-                        .disabled(isLoading)
+                        .disabled(isLoading || isGoogleLoading)
 
                         // Divider
                         HStack(spacing: 12) {
-                            Rectangle()
-                                .fill(Color.secondary.opacity(0.25))
-                                .frame(height: 1)
-                            Text("or")
-                                .font(.caption)
-                                .foregroundStyle(Color.secondary)
-                            Rectangle()
-                                .fill(Color.secondary.opacity(0.25))
-                                .frame(height: 1)
+                            Rectangle().fill(Color.secondary.opacity(0.25)).frame(height: 1)
+                            Text("or").font(.caption).foregroundStyle(Color.secondary)
+                            Rectangle().fill(Color.secondary.opacity(0.25)).frame(height: 1)
                         }
                         .padding(.vertical, 4)
 
                         // Google Sign In
                         Button {
-                            showGoogleStub = true
+                            Task { await attemptGoogleSignIn() }
                         } label: {
-                            HStack(spacing: 10) {
-                                // Google "G" logo in brand colors
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.white)
-                                        .frame(width: 24, height: 24)
-                                    Text("G")
-                                        .font(.system(size: 14, weight: .bold))
-                                        .foregroundStyle(Color(red: 0.25, green: 0.52, blue: 0.96))
+                            ZStack {
+                                if isGoogleLoading {
+                                    ProgressView()
+                                } else {
+                                    HStack(spacing: 10) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color.white)
+                                                .frame(width: 24, height: 24)
+                                            Text("G")
+                                                .font(.system(size: 14, weight: .bold))
+                                                .foregroundStyle(Color(red: 0.25, green: 0.52, blue: 0.96))
+                                        }
+                                        Text("Continue with Google")
+                                            .font(.headline)
+                                            .foregroundStyle(Color.primary)
+                                    }
                                 }
-
-                                Text("Continue with Google")
-                                    .font(.headline)
-                                    .foregroundStyle(Color.primary)
                             }
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
@@ -186,11 +183,7 @@ struct SignInView: View {
                                     .stroke(Color.secondary.opacity(0.25), lineWidth: 1)
                             )
                         }
-                        .alert("Google Sign In", isPresented: $showGoogleStub) {
-                            Button("OK", role: .cancel) {}
-                        } message: {
-                            Text("Google authentication isn't wired up yet. Use email/password for now.")
-                        }
+                        .disabled(isLoading || isGoogleLoading)
                     }
                     .padding(24)
                     .background(Color(uiColor: .systemBackground))
@@ -202,29 +195,50 @@ struct SignInView: View {
                 }
             }
         }
-        .onSubmit {
-            attemptSignIn()
-        }
+        .onSubmit { attemptSignIn() }
     }
 
+    // MARK: - Email sign-in
     private func attemptSignIn() {
         guard !isLoading else { return }
         errorMessage = ""
         isLoading = true
-
-        // Small artificial delay for UX realism
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             do {
                 try auth.signIn(email: email, password: password)
             } catch {
                 errorMessage = error.localizedDescription
-                isLoading = false
-                shake = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                    shake = false
-                }
+                triggerShake()
             }
             isLoading = false
         }
+    }
+
+    // MARK: - Google sign-in
+    @MainActor
+    private func attemptGoogleSignIn() async {
+        guard let vc = topViewController() else { return }
+        errorMessage = ""
+        isGoogleLoading = true
+        do {
+            try await auth.signInWithGoogle(presenting: vc)
+        } catch {
+            errorMessage = error.localizedDescription
+            triggerShake()
+        }
+        isGoogleLoading = false
+    }
+
+    private func triggerShake() {
+        shake = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { shake = false }
+    }
+
+    private func topViewController() -> UIViewController? {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let root = scene.windows.first?.rootViewController else { return nil }
+        var top: UIViewController = root
+        while let presented = top.presentedViewController { top = presented }
+        return top
     }
 }

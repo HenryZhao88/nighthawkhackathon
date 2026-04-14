@@ -1,4 +1,5 @@
 import SwiftUI
+import GoogleSignIn
 
 @main
 struct NighthawkApp: App {
@@ -28,6 +29,9 @@ struct NighthawkApp: App {
             .environmentObject(auth)
             .preferredColorScheme(colorScheme)
             .animation(.easeInOut(duration: 0.3), value: auth.isAuthenticated)
+            .onOpenURL { url in
+                GIDSignIn.sharedInstance.handle(url)
+            }
         }
     }
 }
