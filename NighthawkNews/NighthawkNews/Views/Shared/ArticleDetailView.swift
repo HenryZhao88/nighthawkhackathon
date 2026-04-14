@@ -8,7 +8,7 @@ struct ArticleDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // MARK: Hero image 16:9
-                AsyncImageView(urlString: article.imageURL)
+                AsyncImageView(urlString: article.imageURL, category: article.category)
                     .frame(maxWidth: .infinity)
                     .aspectRatio(16 / 9, contentMode: .fit)
                     .clipped()

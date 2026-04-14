@@ -6,7 +6,7 @@ struct ArticleCard: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             // Thumbnail
-            AsyncImageView(urlString: article.imageURL)
+            AsyncImageView(urlString: article.imageURL, category: article.category)
                 .frame(width: 100, height: 100)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
 

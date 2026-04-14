@@ -34,12 +34,7 @@ struct FeedCardView: View {
     }
 
     private var feedPlaceholder: some View {
-        Color(uiColor: .systemGray5)
-            .overlay {
-                Image(systemName: "photo")
-                    .font(.system(size: 64))
-                    .foregroundStyle(Color(uiColor: .systemGray2))
-            }
+        CategoryPlaceholder(category: article.category)
     }
 
     var body: some View {

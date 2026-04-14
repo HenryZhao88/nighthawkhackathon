@@ -2,6 +2,7 @@ import asyncio
 import feedparser
 import uuid
 import time
+import trafilatura
 from datetime import datetime, timezone
 from bs4 import BeautifulSoup
 
@@ -99,6 +100,41 @@ def _clean_html(raw: str) -> str:
     return " ".join(soup.get_text(separator=" ").split())
 
 
+def _fetch_full_content(url: str) -> tuple[str | None, str | None]:
+    """
+    Fetch the article page once and return (body_text, image_url).
+    image_url comes from og:image / twitter:image meta tags — the canonical
+    high-res thumbnail every modern news site sets for social sharing.
+    """
+    try:
+        html = trafilatura.fetch_url(url)
+        if not html:
+            return None, None
+
+        # Body
+        text = trafilatura.extract(
+            html,
+            include_comments=False,
+            include_tables=False,
+            no_fallback=False,
+        )
+        body = text.strip() if text else None
+
+        # Image — try Open Graph then Twitter Card
+        soup = BeautifulSoup(html, "html.parser")
+        image_url: str | None = None
+        for attr, name in [("property", "og:image"), ("name", "twitter:image")]:
+            tag = soup.find("meta", attrs={attr: name})
+            if tag:
+                image_url = tag.get("content") or None
+            if image_url:
+                break
+
+        return body, image_url
+    except Exception:
+        return None, None
+
+
 def _parse_date(entry) -> str:
     parsed = getattr(entry, "published_parsed", None)
     if parsed:
@@ -133,15 +169,25 @@ def _parse_feed(source: str, category: str, feed_url: str) -> list[dict]:
 
         link = entry.get("link", "")
 
-        # Body: prefer full content, fall back to summary
-        raw_body = ""
-        content = getattr(entry, "content", None)
-        if content:
-            raw_body = content[0].get("value", "")
-        if not raw_body:
-            raw_body = getattr(entry, "summary", "")
+        # Fetch the article page once — get full body AND og:image in one request
+        page_body, page_image = _fetch_full_content(link) if link else (None, None)
 
-        body    = _clean_html(raw_body) if raw_body else title
+        # Body: prefer full scraped text, fall back to RSS summary
+        if page_body:
+            body = page_body
+        else:
+            raw_body = ""
+            content = getattr(entry, "content", None)
+            if content:
+                raw_body = content[0].get("value", "")
+            if not raw_body:
+                raw_body = getattr(entry, "summary", "")
+            body = _clean_html(raw_body) if raw_body else title
+
+        # Image: prefer RSS media tags (already embedded, high quality),
+        # then fall back to the og:image scraped from the article page.
+        image_url = _extract_image(entry) or page_image
+
         excerpt = _make_excerpt(body)
 
         articles.append({
@@ -149,7 +195,7 @@ def _parse_feed(source: str, category: str, feed_url: str) -> list[dict]:
             "title":       title,
             "excerpt":     excerpt,
             "body":        body,
-            "imageURL":    _extract_image(entry),
+            "imageURL":    image_url,
             "source":      source,
             "category":    category,
             "publishedAt": _parse_date(entry),
