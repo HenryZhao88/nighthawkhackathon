@@ -76,8 +76,8 @@ def _extract_image(entry) -> str | None:
         html = content[0].get("value", "")
     if not html:
         html = getattr(entry, "summary", "")
-    if html:
-        soup = BeautifulSoup(html, "lxml")
+    if html and "<" in html:   # only parse if it actually looks like HTML
+        soup = BeautifulSoup(html, "html.parser")
         img  = soup.find("img")
         if img:
             src = img.get("src") or img.get("data-src", "")
@@ -93,7 +93,9 @@ def _extract_image(entry) -> str | None:
 
 
 def _clean_html(raw: str) -> str:
-    soup = BeautifulSoup(raw, "lxml")
+    if "<" not in raw:          # plain text already — skip the parser
+        return " ".join(raw.split())
+    soup = BeautifulSoup(raw, "html.parser")
     return " ".join(soup.get_text(separator=" ").split())
 
 
