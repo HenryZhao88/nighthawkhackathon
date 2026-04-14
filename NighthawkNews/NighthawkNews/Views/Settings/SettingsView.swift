@@ -43,7 +43,7 @@ struct SettingsView: View {
                 } label: {
                     Text("Sign Out")
                 }
-                .confirmationDialog("Sign out of Nighthawk?", isPresented: $confirmSignOut, titleVisibility: .visible) {
+                .confirmationDialog("Sign out of NewsHawk?", isPresented: $confirmSignOut, titleVisibility: .visible) {
                     Button("Sign Out", role: .destructive) {
                         auth.signOut()
                     }

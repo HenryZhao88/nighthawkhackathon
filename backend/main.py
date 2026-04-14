@@ -1,5 +1,5 @@
 """
-Nighthawk News  —  Backend API
+NewsHawk News  —  Backend API
 ==============================
 Scrapes RSS feeds from reputable outlets, caches results in memory,
 and refreshes every 30 minutes automatically.
@@ -56,7 +56,7 @@ async def lifespan(app: FastAPI):
 # App
 # ---------------------------------------------------------------------------
 
-app = FastAPI(title="Nighthawk News API", lifespan=lifespan)
+app = FastAPI(title="NewsHawk News API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

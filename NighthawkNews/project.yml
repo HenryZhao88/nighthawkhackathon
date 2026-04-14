@@ -1,6 +1,6 @@
 name: NighthawkNews
 options:
-  bundleIdPrefix: com.nighthawk
+  bundleIdPrefix: com.newshawk
   deploymentTarget:
     iOS: "17.0"
   createIntermediateGroups: true
@@ -21,11 +21,11 @@ targets:
       path: NighthawkNews/NighthawkNews.entitlements
       properties:
         keychain-access-groups:
-          - $(AppIdentifierPrefix)com.nighthawk.NighthawkNews
+          - $(AppIdentifierPrefix)com.newshawk.NewsHawkNews
     info:
       path: NighthawkNews/Info.plist
       properties:
-        CFBundleDisplayName: Nighthawk
+        CFBundleDisplayName: NewsHawk
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
@@ -37,7 +37,7 @@ targets:
               - com.googleusercontent.apps.43405219569-534pf0moie5i3n0tu5gdulahdqu93am7
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.nighthawk.NighthawkNews
+        PRODUCT_BUNDLE_IDENTIFIER: com.newshawk.NewsHawkNews
         IPHONEOS_DEPLOYMENT_TARGET: "17.0"
         SWIFT_VERSION: "5.0"
         CODE_SIGN_STYLE: Automatic

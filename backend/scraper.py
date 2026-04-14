@@ -159,7 +159,7 @@ def _make_excerpt(body: str, max_chars: int = 220) -> str:
 # ---------------------------------------------------------------------------
 
 def _parse_feed(source: str, category: str, feed_url: str) -> list[dict]:
-    feed = feedparser.parse(feed_url, request_headers={"User-Agent": "NighthawkNewsBot/1.0"})
+    feed = feedparser.parse(feed_url, request_headers={"User-Agent": "NewsHawkBot/1.0"})
     articles = []
 
     for entry in feed.entries[:MAX_PER_FEED]:

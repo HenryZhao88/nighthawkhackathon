@@ -11,7 +11,7 @@ struct HomeView: View {
             CategoryFilterBar(selected: $selectedCategory, categories: categories)
             ArticleListView(articles: store.articles(in: selectedCategory))
         }
-        .navigationTitle("Nighthawk")
+        .navigationTitle("NewsHawk")
         .navigationBarTitleDisplayMode(.large)
         .background(Color(uiColor: .systemGroupedBackground))
     }
