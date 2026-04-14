@@ -1,0 +1,94 @@
+
+[Speaker 1]
+So our idea is to build an app that's similar to TikTok or Instagram, right? But it's going to be for news. And the problem that it solves is that people really don't like reading news because it can be so like aggressive and so daunting to read like this big sheet of paper with such tiny font and everything.
+
+So that's a problem we're going to solve. And how we want to do it is we want to have three tabs on the bottom, okay? There's going to be a home section and then there's going to be section B, we'll call it for now.
+
+We can name it later. And there's going to be a settings section. The home section, it will have tabs at the top, right?
+
+[Speaker 2]
+Or we could just have it separate. Or wait, okay, we can have it as like short excerpt. Like, you know how for research papers, there's like a little abstract and then it like fades out and like those stupid websites like blogs like, oh, sign in to a few more.
+
+It could be like that.
+
+[Speaker 1]
+Okay, okay.
+
+[Speaker 2]
+And then click into it.
+
+[Speaker 1]
+You still do want tabs for different sections. You still want different tabs for different subjects, right?
+
+[Speaker 2]
+But we can just have all the subjects in one. Or I guess they could do like favorites or something. I don't know.
+
+[Speaker 1]
+Yeah, but then...
+
+[Speaker 2]
+I guess, yeah, yeah, let's just do like different tabs for different subjects.
+
+[Speaker 1]
+Because all subjects in one is going to be in section B, right? Okay, so for section... Oh, for the home tab.
+
+For the home section on the bottom, there are going to be different tabs at the top that are in different subjects which contain different headlines and different news articles for that subject, right? Okay, and then we can focus on design later. But what we were thinking, right, is that we're gonna have like more like rectangle slides kind of in the home section.
+
+And then what did you want in the rectangle? In this part? Like an image?
+
+An image? But then what if some articles don't have an image?
+
+[Speaker 2]
+That's a problem.
+
+[Speaker 1]
+Okay, so what we wanted was like an image. Kind of like a YouTube thumbnail. Like clickbait, kind of, right?
+
+You want clickbait. And then to the right, there's going to be like the hottest part of the article. And then you can click view more.
+
+And then that will expand you into a larger section that takes up the entire screen. Except for the bottom tab with the home and the scrolling and the settings. Take the entire screen.
+
+And then you will use that to read the extra article, right? And then you have multiple sections. You can just scroll down and scroll down and see more like articles presented to you.
+
+So that's our idea for the home tab. For the scrolling tab, this one is where I wanted to implement the idea of Instagram and TikTok and YouTube Shorts, which is building an algorithm centered around a person and around what a person clicks on and what they like. So for every news article, I do want like a like button.
+
+I do want a like button, right? And then if you like it, any algorithm should record that and be like, oh, what subject is this? And then recommend more stuff in that area, right?
+
+And this should be represented by an exponential graph, not a linear graph. Because some people, if they first start liking something, it doesn't mean they're going to like that thing forever. It doesn't mean they only like that thing.
+
+So it should only have small weight in the beginning. But if you keep liking stuff on that topic, then it should have more, then it should pull more and more weight. Okay.
+
+And then for the scrolling section, the design, how I want it to be, is like it's going to be a nice, almost widget, like a small sub-rectangle in the big rectangle, okay? And then this one will contain, again, just the beginning of the article, I guess. No, it's going to have the headline and then the article.
+
+And then you can choose to read it. If you read it, the way you read it is you click on it and then you can scroll down because it's going to show the whole news article. And then if you want to go back, then just swipe right from the left side of your screen and it'll take you back to the widget.
+
+And then you can scroll down and then it'll show you the next widget. And you can scroll down and scroll down and scroll down. The algorithm to recommend different news articles does not have to be overly complex at the moment because, again, this is a beginner idea and we may develop more later.
+
+But obviously, to have personalized recommendations, we need a form of sign-in. So we're going to do, you can do email or password. No, actually, yeah.
+
+We can do email and password like the old 2000s style websites or we can sign in with Google. And that will all be when you first download the app. After that, it should remember.
+
+Okay. And then in settings, it should be the regular stuff. There should be dark theme, light theme.
+
+There should be sign out. Oh, yeah, username. There should be sign out or add an account.
+
+No, there shouldn't be add an account. That's going to be too much. We can just do sign out.
+
+[Speaker 2]
+Previously viewed.
+
+[Speaker 1]
+Oh, previously viewed. Perfect. Previously viewed.
+
+And then we need the like section.
+
+[Speaker 2]
+Wait, but then if you're going to have the like button, would you want comments too? Is that?
+
+[Speaker 1]
+No. No. Comments.
+
+It's just going to be red versus blue throughout the entire comment section. Okay, so that is our idea.
+
+[Speaker 2]
+Fire.
