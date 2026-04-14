@@ -26,7 +26,8 @@ The chip will debut inside a new Mac Pro and a refreshed Mac Studio, both availa
             imageURL: "https://picsum.photos/seed/101/600/400",
             source: "The Verge",
             category: "Tech",
-            publishedAt: ago(hours: 2)
+            publishedAt: ago(hours: 2),
+            bias: nil
         ),
 
         Article(
@@ -47,7 +48,8 @@ Pricing for GPT-5 starts at $0.015 per 1,000 input tokens, roughly three times t
             imageURL: "https://picsum.photos/seed/102/600/400",
             source: "Wired",
             category: "Tech",
-            publishedAt: ago(hours: 5)
+            publishedAt: ago(hours: 5),
+            bias: nil
         ),
 
         Article(
@@ -68,7 +70,8 @@ Access is rolling out through Google AI Studio and the Gemini API over the comin
             imageURL: nil,
             source: "TechCrunch",
             category: "Tech",
-            publishedAt: ago(hours: 8)
+            publishedAt: ago(hours: 8),
+            bias: nil
         ),
 
         Article(
@@ -89,7 +92,8 @@ NASA watched the test closely. Starship's Human Landing System variant is centra
             imageURL: "https://picsum.photos/seed/104/600/400",
             source: "Ars Technica",
             category: "Tech",
-            publishedAt: ago(hours: 12)
+            publishedAt: ago(hours: 12),
+            bias: nil
         ),
 
         // MARK: - Business (3)
@@ -111,7 +115,8 @@ Economists at major banks revised their rate forecasts upward following the anno
             imageURL: "https://picsum.photos/seed/201/600/400",
             source: "Wall Street Journal",
             category: "Business",
-            publishedAt: ago(hours: 3)
+            publishedAt: ago(hours: 3),
+            bias: nil
         ),
 
         Article(
@@ -132,7 +137,8 @@ Meridian's co-founder and CEO, Dr. Priya Anand, will serve as VP of Custom Silic
             imageURL: "https://picsum.photos/seed/202/600/400",
             source: "Bloomberg",
             category: "Business",
-            publishedAt: ago(hours: 6)
+            publishedAt: ago(hours: 6),
+            bias: nil
         ),
 
         Article(
@@ -153,7 +159,8 @@ Analysts at Morgan Stanley raised their twelve-month price target from $210 to $
             imageURL: nil,
             source: "Reuters",
             category: "Business",
-            publishedAt: ago(hours: 14)
+            publishedAt: ago(hours: 14),
+            bias: nil
         ),
 
         // MARK: - Politics (3)
@@ -175,7 +182,8 @@ The White House praised the Senate's action and said the President would sign th
             imageURL: "https://picsum.photos/seed/301/600/400",
             source: "NPR",
             category: "Politics",
-            publishedAt: ago(hours: 4)
+            publishedAt: ago(hours: 4),
+            bias: nil
         ),
 
         Article(
@@ -196,7 +204,8 @@ In a notable development, the alliance endorsed a new doctrine explicitly addres
             imageURL: "https://picsum.photos/seed/302/600/400",
             source: "Foreign Policy",
             category: "Politics",
-            publishedAt: ago(hours: 18)
+            publishedAt: ago(hours: 18),
+            bias: nil
         ),
 
         Article(
@@ -217,7 +226,8 @@ The Court typically hears cases argued in October through April and issues decis
             imageURL: "https://picsum.photos/seed/303/600/400",
             source: "Politico",
             category: "Politics",
-            publishedAt: ago(hours: 22)
+            publishedAt: ago(hours: 22),
+            bias: nil
         ),
 
         // MARK: - Sports (3)
@@ -239,7 +249,8 @@ The transaction is contingent on Okafor passing a physical, which is scheduled f
             imageURL: "https://picsum.photos/seed/401/600/400",
             source: "ESPN",
             category: "Sports",
-            publishedAt: ago(hours: 7)
+            publishedAt: ago(hours: 7),
+            bias: nil
         ),
 
         Article(
@@ -260,7 +271,8 @@ England will face Argentina in Sunday's final, a rematch of the 1986 classic. Th
             imageURL: "https://picsum.photos/seed/402/600/400",
             source: "BBC Sport",
             category: "Sports",
-            publishedAt: ago(hours: 16)
+            publishedAt: ago(hours: 16),
+            bias: nil
         ),
 
         Article(
@@ -281,7 +293,8 @@ The Williams Sisters Foundation was established in 2019 and has since funded ove
             imageURL: nil,
             source: "The Guardian",
             category: "Sports",
-            publishedAt: ago(hours: 30)
+            publishedAt: ago(hours: 30),
+            bias: nil
         ),
 
         // MARK: - Science (4)
@@ -303,7 +316,8 @@ The full dataset will be publicly released in 72 hours through the Gravitational
             imageURL: "https://picsum.photos/seed/501/600/400",
             source: "Nature",
             category: "Science",
-            publishedAt: ago(hours: 9)
+            publishedAt: ago(hours: 9),
+            bias: nil
         ),
 
         Article(
@@ -324,7 +338,8 @@ The companies plan to submit a Biologics License Application to the FDA in the t
             imageURL: "https://picsum.photos/seed/502/600/400",
             source: "STAT News",
             category: "Science",
-            publishedAt: ago(hours: 11)
+            publishedAt: ago(hours: 11),
+            bias: nil
         ),
 
         Article(
@@ -345,7 +360,8 @@ NASA and ESA are jointly studying proposals for a Europa lander mission that cou
             imageURL: "https://picsum.photos/seed/503/600/400",
             source: "Scientific American",
             category: "Science",
-            publishedAt: ago(hours: 20)
+            publishedAt: ago(hours: 20),
+            bias: nil
         ),
 
         Article(
@@ -366,7 +382,8 @@ The path to clinical transplantation remains long. The organoids currently measu
             imageURL: "https://picsum.photos/seed/504/600/400",
             source: "MIT Technology Review",
             category: "Science",
-            publishedAt: ago(hours: 36)
+            publishedAt: ago(hours: 36),
+            bias: nil
         ),
 
         // MARK: - Entertainment (3)
@@ -388,7 +405,8 @@ Warner Bros. confirmed immediately after the weekend results that a fourth filmâ
             imageURL: "https://picsum.photos/seed/601/600/400",
             source: "Variety",
             category: "Entertainment",
-            publishedAt: ago(hours: 13)
+            publishedAt: ago(hours: 13),
+            bias: nil
         ),
 
         Article(
@@ -409,7 +427,8 @@ Swift's team announced that 5% of all ticket revenue will be donated to literacy
             imageURL: "https://picsum.photos/seed/602/600/400",
             source: "Rolling Stone",
             category: "Entertainment",
-            publishedAt: ago(hours: 25)
+            publishedAt: ago(hours: 25),
+            bias: nil
         ),
 
         Article(
@@ -430,7 +449,8 @@ Netflix has greenlit a follow-up series covering the Space Shuttle program, also
             imageURL: "https://picsum.photos/seed/603/600/400",
             source: "Hollywood Reporter",
             category: "Entertainment",
-            publishedAt: ago(hours: 40)
+            publishedAt: ago(hours: 40),
+            bias: nil
         )
     ]
 }

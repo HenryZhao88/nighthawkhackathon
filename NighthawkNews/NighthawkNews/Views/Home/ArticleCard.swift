@@ -2,6 +2,10 @@ import SwiftUI
 
 struct ArticleCard: View {
     let article: Article
+    @EnvironmentObject var store: ArticleStore
+
+    private var isLiked: Bool      { store.likedIDs.contains(article.id) }
+    private var isBookmarked: Bool { store.bookmarkedIDs.contains(article.id) }
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -28,6 +32,32 @@ struct ArticleCard: View {
                     Text(article.source)
                     Text("·")
                     Text(article.publishedAt.timeAgoString())
+
+                    Spacer()
+
+                    // Like button
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                            store.likeArticle(id: article.id)
+                        }
+                    } label: {
+                        Image(systemName: isLiked ? "heart.fill" : "heart")
+                            .foregroundStyle(isLiked ? .red : Color(uiColor: .tertiaryLabel))
+                            .font(.system(size: 15))
+                    }
+                    .buttonStyle(.plain)
+
+                    // Bookmark button
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                            store.bookmarkArticle(id: article.id)
+                        }
+                    } label: {
+                        Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
+                            .foregroundStyle(isBookmarked ? .yellow : Color(uiColor: .tertiaryLabel))
+                            .font(.system(size: 15))
+                    }
+                    .buttonStyle(.plain)
                 }
                 .font(.caption)
                 .foregroundStyle(Color(uiColor: .tertiaryLabel))
