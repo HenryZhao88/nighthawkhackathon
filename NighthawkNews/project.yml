@@ -4,12 +4,19 @@ options:
   deploymentTarget:
     iOS: "17.0"
   createIntermediateGroups: true
+packages:
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
+    from: 8.0.0
 targets:
   NighthawkNews:
     type: application
     platform: iOS
     sources:
       - path: NighthawkNews
+    dependencies:
+      - package: GoogleSignIn
+        product: GoogleSignIn
     info:
       path: NighthawkNews/Info.plist
       properties:
@@ -19,6 +26,10 @@ targets:
           - UIInterfaceOrientationPortrait
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
+        GIDClientID: "43405219569-534pf0moie5i3n0tu5gdulahdqu93am7.apps.googleusercontent.com"
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - com.googleusercontent.apps.43405219569-534pf0moie5i3n0tu5gdulahdqu93am7
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nighthawk.NighthawkNews
