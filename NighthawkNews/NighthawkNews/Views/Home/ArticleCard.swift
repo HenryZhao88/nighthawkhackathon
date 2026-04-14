@@ -31,6 +31,11 @@ struct ArticleCard: View {
                 }
                 .font(.caption)
                 .foregroundStyle(Color(uiColor: .tertiaryLabel))
+
+                if let bias = article.bias {
+                    PoliticalBiasBar(bias: bias)
+                        .padding(.top, 4)
+                }
             }
 
             Spacer(minLength: 0)

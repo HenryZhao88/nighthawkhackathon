@@ -1,10 +1,19 @@
 import asyncio
+import os
 import feedparser
 import uuid
 import time
 import trafilatura
 from datetime import datetime, timezone
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+from openai import AsyncOpenAI
+
+load_dotenv()
+_openai = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# Persists across refresh cycles so each article is only rated once
+_bias_cache: dict[str, float] = {}
 
 # ---------------------------------------------------------------------------
 # Feed registry  —  (display_name, rss_url) per category
@@ -206,6 +215,44 @@ def _parse_feed(source: str, category: str, feed_url: str) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
+# Political-bias rating  (async, cached per article ID)
+# ---------------------------------------------------------------------------
+
+async def _rate_bias(article_id: str, title: str, excerpt: str) -> float:
+    """
+    Returns a bias score in [-1.0, 1.0].
+    -1 = strongly left-leaning, 0 = neutral, +1 = strongly right-leaning.
+    Cached so each article is only sent to the API once.
+    """
+    if article_id in _bias_cache:
+        return _bias_cache[article_id]
+
+    prompt = (
+        "Rate the political bias of this news article on a scale from -1.0 to 1.0. "
+        "-1.0 means strongly left-leaning, 0.0 means neutral/centrist, "
+        "1.0 means strongly right-leaning. "
+        "Reply with ONLY a decimal number and nothing else.\n\n"
+        f"Title: {title}\nSummary: {excerpt}"
+    )
+    try:
+        response = await _openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=10,
+            temperature=0,
+        )
+        raw = response.choices[0].message.content.strip()
+        score = float(raw)
+        score = max(-1.0, min(1.0, score))
+    except Exception as exc:
+        print(f"[bias] rating failed for '{title[:40]}': {exc}")
+        score = 0.0
+
+    _bias_cache[article_id] = score
+    return score
+
+
+# ---------------------------------------------------------------------------
 # Async orchestrator
 # ---------------------------------------------------------------------------
 
@@ -230,4 +277,13 @@ async def scrape_all() -> list[dict]:
     # Newest first
     articles.sort(key=lambda a: a["publishedAt"], reverse=True)
     print(f"[scraper] collected {len(articles)} articles from {len(tasks)} feeds")
+
+    # Rate political bias — cached articles return instantly, new ones hit the API
+    bias_tasks = [_rate_bias(a["id"], a["title"], a["excerpt"]) for a in articles]
+    scores = await asyncio.gather(*bias_tasks, return_exceptions=True)
+    for article, score in zip(articles, scores):
+        article["bias"] = score if isinstance(score, float) else 0.0
+    new_rated = sum(1 for a in articles if a["id"] not in _bias_cache or True)
+    print(f"[bias] ratings complete ({len(_bias_cache)} total cached)")
+
     return articles

@@ -9,4 +9,5 @@ struct Article: Identifiable, Hashable, Decodable {
     let source: String
     let category: String
     let publishedAt: Date
+    let bias: Double?        // -1.0 (left) … 0.0 (center) … +1.0 (right); nil if unrated
 }

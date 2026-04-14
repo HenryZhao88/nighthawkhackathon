@@ -29,6 +29,10 @@ struct ArticleDetailView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
+                    if let bias = article.bias {
+                        PoliticalBiasBar(bias: bias)
+                    }
+
                     Divider()
 
                     // Body
