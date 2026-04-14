@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ArticleListView: View {
     let articles: [Article]
+    @EnvironmentObject var store: ArticleStore
 
     var body: some View {
         ScrollView {
@@ -21,5 +22,8 @@ struct ArticleListView: View {
             ArticleDetailView(article: article)
         }
         .animation(.easeInOut(duration: 0.25), value: articles.map(\.id))
+        .refreshable {
+            await store.refresh()
+        }
     }
 }

@@ -17,6 +17,11 @@ targets:
     dependencies:
       - package: GoogleSignIn
         product: GoogleSignIn
+    entitlements:
+      path: NighthawkNews/NighthawkNews.entitlements
+      properties:
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.nighthawk.NighthawkNews
     info:
       path: NighthawkNews/Info.plist
       properties:

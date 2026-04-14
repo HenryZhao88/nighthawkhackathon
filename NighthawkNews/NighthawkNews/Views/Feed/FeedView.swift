@@ -5,17 +5,22 @@ struct FeedView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 0) {
-                    ForEach(store.articles) { article in
-                        FeedCardView(article: article)
-                            .containerRelativeFrame([.horizontal, .vertical])
+            // GeometryReader ignores safe area so it measures the TRUE full screen
+            // (behind status bar, behind tab bar). We pass those measurements into
+            // the cards so they can place text/buttons dynamically.
+            GeometryReader { geo in
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(store.articles) { article in
+                            FeedCardView(article: article, safeArea: geo.safeAreaInsets)
+                                .frame(width: geo.size.width, height: geo.size.height)
+                        }
                     }
+                    .scrollTargetLayout()
                 }
-                .scrollTargetLayout()
+                .scrollTargetBehavior(.paging)
             }
-            .scrollTargetBehavior(.paging)
-            .ignoresSafeArea()
+            .ignoresSafeArea()          // GeometryReader fills the real full screen
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: Article.self) { article in
                 ArticleDetailView(article: article)

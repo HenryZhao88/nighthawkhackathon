@@ -2,33 +2,76 @@ import SwiftUI
 
 struct FeedCardView: View {
     let article: Article
+    let safeArea: EdgeInsets          // real measured insets from FeedView's GeometryReader
     @EnvironmentObject var store: ArticleStore
 
     private var isLiked: Bool { store.likedIDs.contains(article.id) }
+    private var isBookmarked: Bool { store.bookmarkedIDs.contains(article.id) }
+
+    // Bottom clearance: tab bar (49) + home indicator / bottom inset + breathing room
+    private var bottomClearance: CGFloat { safeArea.bottom + 49 + 20 }
+
+    // Inline image view — avoids the layout-cycle bug that AsyncImageView causes
+    // when used with .fill inside an unconstrained ZStack.
+    @ViewBuilder
+    private var feedImage: some View {
+        if let urlString = article.imageURL, let url = URL(string: urlString) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                case .failure, .empty:
+                    feedPlaceholder
+                @unknown default:
+                    feedPlaceholder
+                }
+            }
+        } else {
+            feedPlaceholder
+        }
+    }
+
+    private var feedPlaceholder: some View {
+        Color(uiColor: .systemGray5)
+            .overlay {
+                Image(systemName: "photo")
+                    .font(.system(size: 64))
+                    .foregroundStyle(Color(uiColor: .systemGray2))
+            }
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            // MARK: - Background + Tappable navigation layer
+
+            // MARK: - Full-bleed background + navigation tap target
             NavigationLink(value: article) {
                 ZStack(alignment: .bottom) {
-                    // Full-bleed image
-                    AsyncImageView(urlString: article.imageURL)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    // Color.clear anchors layout to the card's proposed frame.
+                    // The image is overlaid onto that anchor and clipped to it,
+                    // breaking the layout cycle that causes filled AsyncImages to
+                    // overflow their parent's bounds.
+                    Color.clear
+                        .overlay {
+                            feedImage
+                        }
                         .clipped()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                    // Gradient overlay
+                    // Gradient darkens the lower portion for legibility
                     LinearGradient(
                         colors: [
                             Color.black.opacity(0.0),
-                            Color.black.opacity(0.25),
-                            Color.black.opacity(0.80)
+                            Color.black.opacity(0.30),
+                            Color.black.opacity(0.82)
                         ],
-                        startPoint: UnitPoint(x: 0.5, y: 0.35),
+                        startPoint: UnitPoint(x: 0.5, y: 0.38),
                         endPoint: .bottom
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                    // Text — lower third, leave right margin for buttons
+                    // Text — dynamically spaced above tab bar
                     VStack(alignment: .leading, spacing: 8) {
                         Text(article.source.uppercased())
                             .font(.caption.weight(.bold))
@@ -49,43 +92,41 @@ struct FeedCardView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 16)
-                    .padding(.trailing, 76)   // leave room for action buttons
-                    .padding(.bottom, 100)    // above tab bar
+                    .padding(.trailing, 76)          // clear the action buttons
+                    .padding(.bottom, bottomClearance)
                 }
             }
             .buttonStyle(.plain)
             .contentShape(Rectangle())
 
-            // MARK: - Action buttons (higher z-order, don't trigger nav)
+            // MARK: - Action buttons (sit on top — don't trigger navigation)
             VStack(spacing: 24) {
                 FeedActionButton(
                     icon: isLiked ? "heart.fill" : "heart",
-                    color: isLiked ? Color.red : Color.white
+                    color: isLiked ? .red : .white
                 ) {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
                         store.likeArticle(id: article.id)
                     }
                 }
 
-                // Bookmark — placeholder
-                FeedActionButton(icon: "bookmark", color: Color.white) {
-                    // TODO: bookmark
-                }
-
-                // Share — placeholder
-                FeedActionButton(icon: "square.and.arrow.up", color: Color.white) {
-                    // TODO: share sheet
+                FeedActionButton(
+                    icon: isBookmarked ? "bookmark.fill" : "bookmark",
+                    color: isBookmarked ? .yellow : .white
+                ) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                        store.bookmarkArticle(id: article.id)
+                    }
                 }
             }
             .padding(.trailing, 16)
-            .padding(.bottom, 100)
+            .padding(.bottom, bottomClearance)
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .ignoresSafeArea()
     }
 }
 
-// MARK: - Action button component
+// MARK: - Action button
 struct FeedActionButton: View {
     let icon: String
     let color: Color

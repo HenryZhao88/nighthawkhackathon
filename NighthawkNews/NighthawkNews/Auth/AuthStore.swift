@@ -7,7 +7,7 @@ class AuthStore: ObservableObject {
 
     // Hardcoded account "database" — swap for real backend later
     private let accounts: [String: String] = [
-        "admin@henry.com": "admin"
+        "admin": "admin"
     ]
 
     enum SignInError: LocalizedError {
@@ -38,10 +38,24 @@ class AuthStore: ObservableObject {
     // MARK: - Google OAuth
     @MainActor
     func signInWithGoogle(presenting viewController: UIViewController) async throws {
-        let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: viewController)
-        let email = result.user.profile?.email ?? result.user.userID ?? "Google User"
-        isAuthenticated = true
-        currentEmail = email
+        do {
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: viewController)
+            let email = result.user.profile?.email ?? result.user.userID ?? "Google User"
+            isAuthenticated = true
+            currentEmail = email
+        } catch let error as NSError {
+            // Keychain error (-34018) means the app isn't signed with a team yet.
+            // Fix: open project in Xcode → Signing & Capabilities → set your Team.
+            if error.code == -34018 || error.domain.contains("keychain") ||
+               error.localizedDescription.lowercased().contains("keychain") {
+                throw SignInError.googleFailed(
+                    "Keychain access failed. Open the project in Xcode, go to Signing & Capabilities, and set your Team to your Apple ID."
+                )
+            }
+            // GIDSignIn cancellation — user dismissed the sheet
+            if error.code == -5 { return }
+            throw SignInError.googleFailed(error.localizedDescription)
+        }
     }
 
     // MARK: - Sign Out

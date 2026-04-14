@@ -22,6 +22,9 @@ struct SettingsView: View {
                 NavigationLink("Liked Articles") {
                     LikedArticlesView()
                 }
+                NavigationLink("Bookmarks") {
+                    BookmarkedArticlesView()
+                }
                 NavigationLink("Previously Viewed") {
                     ViewedArticlesView()
                 }
