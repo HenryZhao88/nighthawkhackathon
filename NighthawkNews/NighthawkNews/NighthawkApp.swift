@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct NighthawkApp: App {
     @StateObject private var store = ArticleStore()
+    @StateObject private var auth = AuthStore()
     @AppStorage("theme") private var theme: String = "System"
 
     var colorScheme: ColorScheme? {
@@ -15,9 +16,18 @@ struct NighthawkApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-                .environmentObject(store)
-                .preferredColorScheme(colorScheme)
+            Group {
+                if auth.isAuthenticated {
+                    MainTabView()
+                        .environmentObject(store)
+                } else {
+                    SignInView()
+                        .environmentObject(auth)
+                }
+            }
+            .environmentObject(auth)
+            .preferredColorScheme(colorScheme)
+            .animation(.easeInOut(duration: 0.3), value: auth.isAuthenticated)
         }
     }
 }

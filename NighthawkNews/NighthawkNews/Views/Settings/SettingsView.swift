@@ -2,6 +2,8 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("theme") private var theme: String = "System"
+    @EnvironmentObject var auth: AuthStore
+    @State private var confirmSignOut = false
 
     var body: some View {
         Form {
@@ -27,10 +29,22 @@ struct SettingsView: View {
 
             // MARK: Account
             Section("Account") {
+                LabeledContent("Signed in as") {
+                    Text(auth.currentEmail)
+                        .foregroundStyle(.secondary)
+                        .font(.subheadline)
+                }
+
                 Button(role: .destructive) {
-                    // TODO: sign out
+                    confirmSignOut = true
                 } label: {
                     Text("Sign Out")
+                }
+                .confirmationDialog("Sign out of Nighthawk?", isPresented: $confirmSignOut, titleVisibility: .visible) {
+                    Button("Sign Out", role: .destructive) {
+                        auth.signOut()
+                    }
+                    Button("Cancel", role: .cancel) {}
                 }
             }
         }
