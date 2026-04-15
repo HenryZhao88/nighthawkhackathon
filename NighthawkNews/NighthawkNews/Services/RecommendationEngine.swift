@@ -1,34 +1,50 @@
 import Foundation
 
-/// Ranks articles for the "For You" feed using a simple, explainable
-/// content-based scoring model. No ML — just per-category and per-source
-/// affinities derived from explicit (like) and implicit (open/view) signals,
-/// decayed by article recency.
+/// Ranks and shuffles articles for the "For You" feed.
 ///
-/// score(article) =   recencyWeight   * recencyScore(publishedAt)
-///                  + categoryWeight  * affinity(article.category, in: categoryAffinities)
-///                  + sourceWeight    * affinity(article.source,   in: sourceAffinities)
-///                  + biasWeight      * biasAlignment(article.bias)
-///                  - viewedPenalty   (if the user has already opened this article)
+/// Two-phase algorithm:
+///   1. Score every article against the user's profile (category + source +
+///      bias affinities, decayed by recency, penalised if already viewed).
+///   2. Materialise the feed via weighted-random sampling without replacement.
+///      Higher-scored articles are more likely to appear earlier, but the
+///      order is different every call. After each pick, the winning article's
+///      category and source are temporarily penalised so the next few slots
+///      favour something different — no five-CNBC-articles-in-a-row.
 ///
-/// All weights sum to ~1.0 on a fresh install so recency dominates; as the
-/// user likes/opens more articles the personalisation signal grows.
+/// Result: a feed that is genuinely personalised *and* genuinely randomised
+/// each time the user opens it. Cold-start with no profile = near-uniform
+/// shuffle biased only by recency.
 enum RecommendationEngine {
 
-    // MARK: - Tunable weights
+    // MARK: - Scoring weights
 
-    private static let recencyWeight: Double  = 1.0    // baseline: always prefer fresher news
+    private static let recencyWeight: Double  = 1.0
     private static let categoryWeight: Double = 0.8
     private static let sourceWeight: Double   = 0.4
     private static let biasWeight: Double     = 0.2
-    private static let viewedPenalty: Double  = 0.3
+    private static let viewedPenalty: Double  = 0.5
 
-    // Like counts this many times more than an open.
+    /// Like counts this many times more than an open.
     private static let likeWeight: Double = 3.0
     private static let openWeight: Double = 1.0
 
-    // Half-life for recency decay (hours).
+    /// Half-life for recency decay (hours).
     private static let halfLifeHours: Double = 18.0
+
+    // MARK: - Sampling parameters
+
+    /// Controls how sharp the weighted random is.
+    /// 0 → uniform shuffle (ignores score). Higher → closer to deterministic ranking.
+    /// ~2.5 gives a feed that clearly respects the profile but still surprises you.
+    private static let samplingSharpness: Double = 2.5
+
+    /// After picking an article, multiply the next sampling weight of its
+    /// category / source by this factor. Recovers over subsequent picks.
+    private static let sameCategoryDamping: Double = 0.35
+    private static let sameSourceDamping:   Double = 0.2
+
+    /// How many subsequent picks the damping persists for (decays linearly).
+    private static let dampingWindow: Int = 4
 
     // MARK: - Public API
 
@@ -38,18 +54,68 @@ enum RecommendationEngine {
         let articles: [Article]
     }
 
-    static func rank(_ articles: [Article], using signals: Signals) -> [Article] {
-        let (catAff, srcAff, biasAff) = computeAffinities(signals: signals)
+    /// Generate a fresh, personalised, diversity-interleaved feed.
+    /// Call again to get a different order.
+    static func feed(
+        from articles: [Article],
+        using signals: Signals,
+        rng: inout RandomNumberGenerator
+    ) -> [Article] {
+        guard !articles.isEmpty else { return [] }
 
-        return articles
-            .map { ($0, score($0, catAff: catAff, srcAff: srcAff,
-                              biasAff: biasAff, viewed: signals.viewedIDs.contains($0.id))) }
-            .sorted { lhs, rhs in
-                // Stable: primary = score desc, tiebreak = recency desc
-                if abs(lhs.1 - rhs.1) > 0.001 { return lhs.1 > rhs.1 }
-                return lhs.0.publishedAt > rhs.0.publishedAt
+        let (catAff, srcAff, biasMean) = computeAffinities(signals: signals)
+
+        // Phase 1: score every candidate.
+        var pool: [(article: Article, baseWeight: Double)] = articles.map { a in
+            let s = score(a, catAff: catAff, srcAff: srcAff,
+                          biasMean: biasMean, viewed: signals.viewedIDs.contains(a.id))
+            let w = pow(max(s, 0.0001), samplingSharpness)   // softmax-ish, guaranteed > 0
+            return (a, w)
+        }
+
+        // Phase 2: weighted-random sampling without replacement + diversity damping.
+        var picked: [Article] = []
+        picked.reserveCapacity(pool.count)
+
+        // Track cooldown counters — number of slots left where a cat/src is damped.
+        var catCooldown: [String: Int] = [:]
+        var srcCooldown: [String: Int] = [:]
+
+        while !pool.isEmpty {
+            // Compute effective weight per pool entry given current cooldowns.
+            let weights: [Double] = pool.map { entry in
+                var w = entry.baseWeight
+                if let remaining = catCooldown[entry.article.category], remaining > 0 {
+                    let decay = Double(remaining) / Double(dampingWindow)
+                    w *= (1.0 - (1.0 - sameCategoryDamping) * decay)
+                }
+                if let remaining = srcCooldown[entry.article.source], remaining > 0 {
+                    let decay = Double(remaining) / Double(dampingWindow)
+                    w *= (1.0 - (1.0 - sameSourceDamping) * decay)
+                }
+                return w
             }
-            .map { $0.0 }
+
+            let idx = weightedRandomIndex(weights: weights, rng: &rng)
+            let chosen = pool.remove(at: idx)
+            picked.append(chosen.article)
+
+            // Apply damping to same category/source for the next `dampingWindow` picks.
+            catCooldown[chosen.article.category] = dampingWindow
+            srcCooldown[chosen.article.source]   = dampingWindow
+
+            // Decrement all existing cooldowns by 1.
+            catCooldown = catCooldown.mapValues { max(0, $0 - 1) }
+            srcCooldown = srcCooldown.mapValues { max(0, $0 - 1) }
+        }
+
+        return picked
+    }
+
+    /// Convenience overload that uses the system RNG.
+    static func feed(from articles: [Article], using signals: Signals) -> [Article] {
+        var rng: RandomNumberGenerator = SystemRandomNumberGenerator()
+        return feed(from: articles, using: signals, rng: &rng)
     }
 
     // MARK: - Scoring
@@ -58,13 +124,13 @@ enum RecommendationEngine {
         _ article: Article,
         catAff: [String: Double],
         srcAff: [String: Double],
-        biasAff: Double,
+        biasMean: Double,
         viewed: Bool
     ) -> Double {
         let recency = recencyScore(article.publishedAt)
         let cat     = catAff[article.category] ?? 0
         let src     = srcAff[article.source]   ?? 0
-        let bias    = article.bias.map { biasAlignment($0, targetMean: biasAff) } ?? 0
+        let bias    = article.bias.map { biasAlignment($0, targetMean: biasMean) } ?? 0
 
         var s = recencyWeight  * recency
               + categoryWeight * cat
@@ -75,26 +141,22 @@ enum RecommendationEngine {
         return s
     }
 
-    /// Exponential decay: 1.0 at publish, 0.5 after `halfLifeHours`.
     private static func recencyScore(_ publishedAt: Date) -> Double {
         let hours = max(0, -publishedAt.timeIntervalSinceNow / 3600)
         return pow(0.5, hours / halfLifeHours)
     }
 
-    /// How close an article's bias is to the user's preferred bias range.
-    /// 1.0 if exactly on the user's mean, decaying as distance grows.
     private static func biasAlignment(_ articleBias: Double, targetMean: Double) -> Double {
         let distance = abs(articleBias - targetMean)   // 0…2
-        return max(0, 1.0 - distance)                  // 0…1
+        return max(0, 1.0 - distance)
     }
 
-    // MARK: - Affinities (computed once per ranking pass)
+    // MARK: - Affinities
 
     private static func computeAffinities(
         signals: Signals
     ) -> (category: [String: Double], source: [String: Double], biasMean: Double) {
 
-        // Build fast lookups for the interacted articles only.
         let byID: [UUID: Article] = Dictionary(uniqueKeysWithValues: signals.articles.map { ($0.id, $0) })
 
         var catRaw: [String: Double] = [:]
@@ -114,18 +176,31 @@ enum RecommendationEngine {
         for id in signals.likedIDs  { if let a = byID[id] { record(a, weight: likeWeight) } }
         for id in signals.viewedIDs { if let a = byID[id] { record(a, weight: openWeight) } }
 
-        let categoryAffinity = normalise(catRaw)
-        let sourceAffinity   = normalise(srcRaw)
-        let biasMean         = biasWeightSum > 0 ? biasSum / biasWeightSum : 0
-
-        return (categoryAffinity, sourceAffinity, biasMean)
+        return (normalise(catRaw), normalise(srcRaw),
+                biasWeightSum > 0 ? biasSum / biasWeightSum : 0)
     }
 
-    /// Map raw weights into the 0…1 range. If the user has no signals yet the
-    /// dict is empty and every lookup returns 0 (neutral), so the ranker falls
-    /// back to pure recency — exactly the old behaviour on a fresh install.
     private static func normalise(_ raw: [String: Double]) -> [String: Double] {
         guard let maxVal = raw.values.max(), maxVal > 0 else { return [:] }
         return raw.mapValues { $0 / maxVal }
+    }
+
+    // MARK: - Weighted random
+
+    private static func weightedRandomIndex(
+        weights: [Double],
+        rng: inout RandomNumberGenerator
+    ) -> Int {
+        let total = weights.reduce(0, +)
+        guard total > 0 else {
+            return Int.random(in: 0..<weights.count, using: &rng)
+        }
+        let target = Double.random(in: 0..<total, using: &rng)
+        var running = 0.0
+        for (i, w) in weights.enumerated() {
+            running += w
+            if target < running { return i }
+        }
+        return weights.count - 1
     }
 }
