@@ -22,6 +22,7 @@
 		886F23938BAFB4ABAA63E1E1 /* ViewedArticlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710E1B79595B02D8FC9D42E0 /* ViewedArticlesView.swift */; };
 		8C8895AF589DF4A1B1E717E8 /* CategoryFilterBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28B81ABD70890F566EDD7E4 /* CategoryFilterBar.swift */; };
 		9182D6B6818984FE703B1E30 /* ArticleStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE23AE11389E2C62E17FDE1 /* ArticleStorage.swift */; };
+		BB01A55703A5707A6CFF2000 /* RecommendationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB01A55703A5707A6CFF2001 /* RecommendationEngine.swift */; };
 		98737040EEC7278CAC46AD9E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA1A41EEACD4A5F8B988A9E /* HomeView.swift */; };
 		9AE047ED5C5C3EE0067E3F93 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F463957564BD7573D55BFB10 /* ArticleDetailView.swift */; };
 		A8AB2739E24E228B7D367A25 /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF25ED7B805869EBA42C2A29 /* Article.swift */; };
@@ -39,10 +40,11 @@
 		0406A39D89EE5FB6F2D10382 /* AuthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStore.swift; sourceTree = "<group>"; };
 		0AD0313E552AD155DABE0A5A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		0CA1A41EEACD4A5F8B988A9E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		2F84829DF21160A640019E93 /* NighthawkNews.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NighthawkNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F84829DF21160A640019E93 /* NighthawkNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NighthawkNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D5385A64CD7C1928C183F2C /* LikedArticlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedArticlesView.swift; sourceTree = "<group>"; };
 		4CF74DA337E2399893E07A2A /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		5CC1E056CB8BDF347A06ED32 /* NewsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsService.swift; sourceTree = "<group>"; };
+		BB01A55703A5707A6CFF2001 /* RecommendationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationEngine.swift; sourceTree = "<group>"; };
 		60DF3B088816A7A34E1A8B23 /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 		710E1B79595B02D8FC9D42E0 /* ViewedArticlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewedArticlesView.swift; sourceTree = "<group>"; };
 		780F6D799F81F218ABC40F5B /* NighthawkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NighthawkApp.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			children = (
 				EAE23AE11389E2C62E17FDE1 /* ArticleStorage.swift */,
 				5CC1E056CB8BDF347A06ED32 /* NewsService.swift */,
+				BB01A55703A5707A6CFF2001 /* RecommendationEngine.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -230,7 +233,6 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					617D6C74BF8CD31BA2977C92 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -291,6 +293,7 @@
 				F6D100ED0FFE934E0904B612 /* MainTabView.swift in Sources */,
 				458138575523525C5F6B066F /* MockData.swift in Sources */,
 				0C183FC7E422F8AED6E9993A /* NewsService.swift in Sources */,
+				BB01A55703A5707A6CFF2000 /* RecommendationEngine.swift in Sources */,
 				657B12F0EBA76F7D7BE4688A /* NighthawkApp.swift in Sources */,
 				CA4D6C8E476198E341B278AA /* PoliticalBiasBar.swift in Sources */,
 				4A66D1A2A7A7EF15D64B2287 /* SettingsView.swift in Sources */,
@@ -310,7 +313,7 @@
 				CODE_SIGN_ENTITLEMENTS = NighthawkNews/NighthawkNews.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 82G942H4LJ;
 				INFOPLIST_FILE = NighthawkNews/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -451,7 +454,7 @@
 				CODE_SIGN_ENTITLEMENTS = NighthawkNews/NighthawkNews.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 82G942H4LJ;
 				INFOPLIST_FILE = NighthawkNews/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (

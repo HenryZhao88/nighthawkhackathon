@@ -123,4 +123,13 @@ class ArticleStore: ObservableObject {
     var likedArticles: [Article]      { articles.filter { likedIDs.contains($0.id) } }
     var bookmarkedArticles: [Article] { articles.filter { bookmarkedIDs.contains($0.id) } }
     var viewedArticles: [Article]     { articles.filter { viewedIDs.contains($0.id) } }
+
+    /// Personalised ranking for the "For You" feed. Falls back to recency-only
+    /// on a cold start (no likes, no opens) by design — see RecommendationEngine.
+    var recommendedArticles: [Article] {
+        RecommendationEngine.rank(
+            articles,
+            using: .init(likedIDs: likedIDs, viewedIDs: viewedIDs, articles: articles)
+        )
+    }
 }

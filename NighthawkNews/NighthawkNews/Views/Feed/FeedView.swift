@@ -11,7 +11,7 @@ struct FeedView: View {
             GeometryReader { geo in
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: 0) {
-                        ForEach(store.articles) { article in
+                        ForEach(store.recommendedArticles) { article in
                             FeedCardView(article: article, safeArea: geo.safeAreaInsets)
                                 .frame(width: geo.size.width, height: geo.size.height)
                         }

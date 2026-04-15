@@ -8,8 +8,10 @@ struct FeedCardView: View {
     private var isLiked: Bool { store.likedIDs.contains(article.id) }
     private var isBookmarked: Bool { store.bookmarkedIDs.contains(article.id) }
 
-    // Bottom clearance: tab bar (49) + home indicator / bottom inset + breathing room
-    private var bottomClearance: CGFloat { safeArea.bottom + 49 + 20 }
+    // Bottom clearance: tab bar (49) + home indicator / bottom inset + breathing room.
+    // Breathing room was previously 20 — the bottom of the title was clipping behind
+    // the tab bar on devices without a home indicator, so lift it well clear.
+    private var bottomClearance: CGFloat { safeArea.bottom + 49 + 60 }
 
     // Inline image view — avoids the layout-cycle bug that AsyncImageView causes
     // when used with .fill inside an unconstrained ZStack.
