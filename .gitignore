@@ -3,3 +3,10 @@
 docs
 .env
 backend/.env
+.DS_Store
+# SQLite DB + WAL/SHM sidecars
+backend/articles.db
+backend/articles.db-wal
+backend/articles.db-shm
+backend/__pycache__/
+backend/.venv/

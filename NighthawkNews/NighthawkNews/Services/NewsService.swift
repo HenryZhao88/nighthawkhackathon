@@ -3,10 +3,19 @@ import Foundation
 enum NewsService {
     // -----------------------------------------------------------------------
     // Configuration
-    // Change to your Mac's LAN IP (e.g. "http://192.168.1.42:8000")
-    // when testing on a physical device instead of the simulator.
+    //
+    // Default points at the public Fly.io deployment. Override at runtime by
+    // setting the `NEWSHAWK_API_BASE_URL` UserDefaults key (useful for testing
+    // against a local backend without rebuilding):
+    //
+    //   UserDefaults.standard.set("http://192.168.1.42:8000",
+    //                             forKey: "NEWSHAWK_API_BASE_URL")
     // -----------------------------------------------------------------------
-    static let baseURL = "http://localhost:8000"
+    static let defaultBaseURL = "https://newshawk-api.fly.dev"
+
+    static var baseURL: String {
+        UserDefaults.standard.string(forKey: "NEWSHAWK_API_BASE_URL") ?? defaultBaseURL
+    }
 
     // -----------------------------------------------------------------------
     // Decoder — handles ISO-8601 dates from the backend
@@ -41,8 +50,9 @@ enum NewsService {
         }
         guard let url = components.url else { throw URLError(.badURL) }
 
-        var request        = URLRequest(url: url)
+        var request = URLRequest(url: url)
         request.timeoutInterval = 10
+        request.cachePolicy = .reloadIgnoringLocalCacheData
 
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {

@@ -9,11 +9,13 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 
+from db import ArticleDB
+
 load_dotenv()
 _openai = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Persists across refresh cycles so each article is only rated once
-_bias_cache: dict[str, float] = {}
+# Bias scores are persisted in SQLite so they survive restarts.
+_db = ArticleDB()
 
 # ---------------------------------------------------------------------------
 # Feed registry  —  (display_name, rss_url) per category
@@ -224,8 +226,9 @@ async def _rate_bias(article_id: str, title: str, excerpt: str) -> float:
     -1 = strongly left-leaning, 0 = neutral, +1 = strongly right-leaning.
     Cached so each article is only sent to the API once.
     """
-    if article_id in _bias_cache:
-        return _bias_cache[article_id]
+    cached = _db.get_bias(article_id)
+    if cached is not None:
+        return cached
 
     prompt = (
         "Rate the political bias of this news article on a scale from -1.0 to 1.0. "
@@ -248,7 +251,7 @@ async def _rate_bias(article_id: str, title: str, excerpt: str) -> float:
         print(f"[bias] rating failed for '{title[:40]}': {exc}")
         score = 0.0
 
-    _bias_cache[article_id] = score
+    _db.set_bias(article_id, score)
     return score
 
 
@@ -283,7 +286,6 @@ async def scrape_all() -> list[dict]:
     scores = await asyncio.gather(*bias_tasks, return_exceptions=True)
     for article, score in zip(articles, scores):
         article["bias"] = score if isinstance(score, float) else 0.0
-    new_rated = sum(1 for a in articles if a["id"] not in _bias_cache or True)
-    print(f"[bias] ratings complete ({len(_bias_cache)} total cached)")
+    print(f"[bias] ratings complete for {len(articles)} articles")
 
     return articles

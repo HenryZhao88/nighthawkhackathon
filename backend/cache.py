@@ -1,33 +1,35 @@
+"""
+Thin facade over the SQLite article store.
+
+Keeps the same API the rest of the app used for the old in-memory cache, but
+every read/write now hits the DB so articles survive restarts.
+"""
+
 from datetime import datetime, timezone
 from typing import Optional
 
+from db import ArticleDB
+
 
 class ArticleCache:
-    """
-    Simple in-memory store. Thread-safe for reads; scraper writes happen
-    from a single asyncio background task so no lock is needed.
-    """
-
     REFRESH_INTERVAL_SECONDS = 30 * 60   # 30 minutes
 
-    def __init__(self) -> None:
-        self._articles: list[dict] = []
+    def __init__(self, db: Optional[ArticleDB] = None) -> None:
+        self.db = db or ArticleDB()
         self._updated_at: Optional[datetime] = None
 
     # ------------------------------------------------------------------
     def set(self, articles: list[dict]) -> None:
-        self._articles  = articles
+        self.db.upsert_articles(articles)
         self._updated_at = datetime.now(timezone.utc)
 
     def get(self, category: Optional[str] = None) -> list[dict]:
-        if not category or category == "All":
-            return self._articles
-        return [a for a in self._articles if a["category"] == category]
+        return self.db.list_articles(category=category)
 
     # ------------------------------------------------------------------
     @property
     def is_empty(self) -> bool:
-        return len(self._articles) == 0
+        return self.db.count() == 0
 
     @property
     def last_updated_iso(self) -> Optional[str]:
@@ -35,7 +37,6 @@ class ArticleCache:
 
     @property
     def next_refresh_in(self) -> int:
-        """Seconds until next scheduled refresh (for /health endpoint)."""
         if not self._updated_at:
             return 0
         elapsed = (datetime.now(timezone.utc) - self._updated_at).total_seconds()

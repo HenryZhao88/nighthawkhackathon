@@ -1,0 +1,32 @@
+# Fly.io app config for the NewsHawk backend.
+# Rename "app" below to whatever `fly launch` generates for you.
+
+app = "newshawk-api"
+primary_region = "iad"   # change to whatever is closest to you
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NEWSHAWK_DB_PATH = "/data/articles.db"
+  NEWSHAWK_RETENTION_DAYS = "14"
+
+[[mounts]]
+  source      = "newshawk_data"
+  destination = "/data"
+
+[http_service]
+  internal_port       = 8080
+  force_https         = true
+  auto_stop_machines  = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type       = "requests"
+    soft_limit = 50
+    hard_limit = 100
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
