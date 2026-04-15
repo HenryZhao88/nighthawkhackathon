@@ -4,18 +4,31 @@ import Combine
 @MainActor
 class ArticleStore: ObservableObject {
     @Published var articles: [Article]
-    @Published var likedIDs: Set<UUID> = []
-    @Published var bookmarkedIDs: Set<UUID> = []
-    @Published var viewedIDs: Set<UUID> = []
+    @Published var likedIDs: Set<UUID>
+    @Published var bookmarkedIDs: Set<UUID>
+    @Published var viewedIDs: Set<UUID>
     @Published var isLoading: Bool = false
     @Published var fetchError: String? = nil
     @Published var isShowingStaleData: Bool = false
 
     private var refreshTask: Task<Void, Never>? = nil
+    private var cancellables: Set<AnyCancellable> = []
+
+    private enum Keys {
+        static let liked      = "NEWSHAWK_LIKED_IDS"
+        static let bookmarked = "NEWSHAWK_BOOKMARKED_IDS"
+        static let viewed     = "NEWSHAWK_VIEWED_IDS"
+    }
 
     init() {
-        // Boot order: on-disk cache (real articles from last session) →
-        // bundled mock data if the app has never fetched before.
+        // Restore persisted interactions before anything else so UI shows
+        // correct like/bookmark state on first render.
+        self.likedIDs      = Self.loadIDSet(forKey: Keys.liked)
+        self.bookmarkedIDs = Self.loadIDSet(forKey: Keys.bookmarked)
+        self.viewedIDs     = Self.loadIDSet(forKey: Keys.viewed)
+
+        // Boot order: on-disk article cache → bundled mock data if the app
+        // has never successfully fetched before.
         if let cached = ArticleStorage.load(), !cached.isEmpty {
             self.articles = cached
             self.isShowingStaleData = true
@@ -24,7 +37,36 @@ class ArticleStore: ObservableObject {
             self.isShowingStaleData = true
         }
 
+        observeInteractionChanges()
         startRefreshLoop()
+    }
+
+    // MARK: - Persistence of user interactions
+
+    private static func loadIDSet(forKey key: String) -> Set<UUID> {
+        guard let raw = UserDefaults.standard.array(forKey: key) as? [String] else {
+            return []
+        }
+        return Set(raw.compactMap(UUID.init(uuidString:)))
+    }
+
+    private static func saveIDSet(_ set: Set<UUID>, forKey key: String) {
+        UserDefaults.standard.set(set.map(\.uuidString), forKey: key)
+    }
+
+    private func observeInteractionChanges() {
+        $likedIDs
+            .dropFirst()
+            .sink { Self.saveIDSet($0, forKey: Keys.liked) }
+            .store(in: &cancellables)
+        $bookmarkedIDs
+            .dropFirst()
+            .sink { Self.saveIDSet($0, forKey: Keys.bookmarked) }
+            .store(in: &cancellables)
+        $viewedIDs
+            .dropFirst()
+            .sink { Self.saveIDSet($0, forKey: Keys.viewed) }
+            .store(in: &cancellables)
     }
 
     // MARK: - Refresh loop
@@ -50,8 +92,6 @@ class ArticleStore: ObservableObject {
                 ArticleStorage.save(fetched)
             }
         } catch {
-            // Network/backend unavailable — keep showing whatever we have
-            // (disk cache or mock). UI can read fetchError + isShowingStaleData.
             fetchError = error.localizedDescription
             isShowingStaleData = true
         }
@@ -69,6 +109,7 @@ class ArticleStore: ObservableObject {
     }
 
     func markViewed(id: UUID) {
+        guard !viewedIDs.contains(id) else { return }   // avoid redundant disk writes
         viewedIDs.insert(id)
     }
 

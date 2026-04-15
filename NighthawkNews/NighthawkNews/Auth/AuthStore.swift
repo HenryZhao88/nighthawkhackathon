@@ -26,13 +26,15 @@ class AuthStore: ObservableObject {
 
     // MARK: - Email / Password
     func signIn(email: String, password: String) throws {
-        let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, !password.isEmpty else { throw SignInError.emptyFields }
-        guard let stored = accounts[trimmed.lowercased()], stored == password else {
+        let normalized = email
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        guard !normalized.isEmpty, !password.isEmpty else { throw SignInError.emptyFields }
+        guard let stored = accounts[normalized], stored == password else {
             throw SignInError.invalidCredentials
         }
         isAuthenticated = true
-        currentEmail = trimmed
+        currentEmail = normalized
     }
 
     // MARK: - Google OAuth
