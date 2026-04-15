@@ -3,17 +3,27 @@ import Combine
 
 @MainActor
 class ArticleStore: ObservableObject {
-    @Published var articles: [Article] = MockData.articles   // mock shown instantly
+    @Published var articles: [Article]
     @Published var likedIDs: Set<UUID> = []
     @Published var bookmarkedIDs: Set<UUID> = []
     @Published var viewedIDs: Set<UUID> = []
     @Published var isLoading: Bool = false
     @Published var fetchError: String? = nil
+    @Published var isShowingStaleData: Bool = false
 
     private var refreshTask: Task<Void, Never>? = nil
 
     init() {
-        // Fetch real articles immediately, then refresh every 30 minutes
+        // Boot order: on-disk cache (real articles from last session) →
+        // bundled mock data if the app has never fetched before.
+        if let cached = ArticleStorage.load(), !cached.isEmpty {
+            self.articles = cached
+            self.isShowingStaleData = true
+        } else {
+            self.articles = MockData.articles
+            self.isShowingStaleData = true
+        }
+
         startRefreshLoop()
     }
 
@@ -36,10 +46,14 @@ class ArticleStore: ObservableObject {
             let fetched = try await NewsService.fetchArticles()
             if !fetched.isEmpty {
                 articles = fetched
+                isShowingStaleData = false
+                ArticleStorage.save(fetched)
             }
         } catch {
             // Network/backend unavailable — keep showing whatever we have
+            // (disk cache or mock). UI can read fetchError + isShowingStaleData.
             fetchError = error.localizedDescription
+            isShowingStaleData = true
         }
         isLoading = false
     }
