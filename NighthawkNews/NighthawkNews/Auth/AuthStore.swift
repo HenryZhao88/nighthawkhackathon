@@ -35,6 +35,7 @@ class AuthStore: ObservableObject {
         }
         isAuthenticated = true
         currentEmail = normalized
+        UserDefaults.standard.set(normalized, forKey: "NEWSHAWK_USER_ID")
     }
 
     // MARK: - Google OAuth
@@ -45,6 +46,7 @@ class AuthStore: ObservableObject {
             let email = result.user.profile?.email ?? result.user.userID ?? "Google User"
             isAuthenticated = true
             currentEmail = email
+            UserDefaults.standard.set(email, forKey: "NEWSHAWK_USER_ID")
         } catch let error as NSError {
             // Keychain error (-34018) means the app isn't signed with a team yet.
             // Fix: open project in Xcode → Signing & Capabilities → set your Team.
@@ -65,5 +67,6 @@ class AuthStore: ObservableObject {
         GIDSignIn.sharedInstance.signOut()
         isAuthenticated = false
         currentEmail = ""
+        UserDefaults.standard.removeObject(forKey: "NEWSHAWK_USER_ID")
     }
 }

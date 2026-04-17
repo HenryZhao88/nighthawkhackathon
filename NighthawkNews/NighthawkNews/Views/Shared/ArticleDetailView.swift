@@ -49,6 +49,10 @@ struct ArticleDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             store.markViewed(id: article.id)
+            DwellTracker.shared.startTracking(article.id)
+        }
+        .onDisappear {
+            DwellTracker.shared.stopTracking(article.id)
         }
     }
 }

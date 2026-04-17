@@ -11,6 +11,9 @@ class ArticleStore: ObservableObject {
     @Published var fetchError: String? = nil
     @Published var isShowingStaleData: Bool = false
 
+    /// IDs of articles the user has scrolled past in this session (for /feed endpoint).
+    @Published var sessionSeenIDs: Set<UUID> = []
+
     private var refreshTask: Task<Void, Never>? = nil
     private var cancellables: Set<AnyCancellable> = []
 
@@ -101,16 +104,30 @@ class ArticleStore: ObservableObject {
     // MARK: - Article actions
 
     func likeArticle(id: UUID) {
-        if likedIDs.contains(id) { likedIDs.remove(id) } else { likedIDs.insert(id) }
+        let wasLiked = likedIDs.contains(id)
+        if wasLiked { likedIDs.remove(id) } else { likedIDs.insert(id) }
+        // Only send the positive signal (unlike is implicit — no negative signal)
+        if !wasLiked {
+            InteractionService.shared.queue(articleID: id, interaction: "like")
+        }
     }
 
     func bookmarkArticle(id: UUID) {
-        if bookmarkedIDs.contains(id) { bookmarkedIDs.remove(id) } else { bookmarkedIDs.insert(id) }
+        let wasBookmarked = bookmarkedIDs.contains(id)
+        if wasBookmarked { bookmarkedIDs.remove(id) } else { bookmarkedIDs.insert(id) }
+        if !wasBookmarked {
+            InteractionService.shared.queue(articleID: id, interaction: "bookmark")
+        }
     }
 
     func markViewed(id: UUID) {
-        guard !viewedIDs.contains(id) else { return }   // avoid redundant disk writes
+        guard !viewedIDs.contains(id) else { return }
         viewedIDs.insert(id)
+    }
+
+    /// Record that this article appeared in the feed during this session.
+    func markSeenInSession(id: UUID) {
+        sessionSeenIDs.insert(id)
     }
 
     // MARK: - Queries
@@ -124,11 +141,28 @@ class ArticleStore: ObservableObject {
     var bookmarkedArticles: [Article] { articles.filter { bookmarkedIDs.contains($0.id) } }
     var viewedArticles: [Article]     { articles.filter { viewedIDs.contains($0.id) } }
 
-    /// Build a fresh "For You" feed — personalised, diversified, and randomised.
-    /// Call this every time you want a new order (e.g. on FeedView appear or
-    /// pull-to-refresh). Two consecutive calls with the same profile will
-    /// return different orderings.
-    func generateFeed() -> [Article] {
+    /// Build a personalised feed via the backend 5-stage pipeline.
+    /// Falls back to the local RecommendationEngine when offline.
+    func generateFeed() async -> [Article] {
+        let userID = UserDefaults.standard.string(forKey: "NEWSHAWK_USER_ID") ?? "anonymous"
+        do {
+            let feed = try await NewsService.fetchFeed(
+                userID: userID,
+                sessionSeen: Array(sessionSeenIDs)
+            )
+            if !feed.isEmpty { return feed }
+        } catch {
+            print("[ArticleStore] backend feed failed, falling back to local: \(error)")
+        }
+        // Offline fallback: local recommendation engine
+        return RecommendationEngine.feed(
+            from: articles,
+            using: .init(likedIDs: likedIDs, viewedIDs: viewedIDs, articles: articles)
+        )
+    }
+
+    /// Synchronous local-only feed for immediate display while backend loads.
+    func generateLocalFeed() -> [Article] {
         RecommendationEngine.feed(
             from: articles,
             using: .init(likedIDs: likedIDs, viewedIDs: viewedIDs, articles: articles)

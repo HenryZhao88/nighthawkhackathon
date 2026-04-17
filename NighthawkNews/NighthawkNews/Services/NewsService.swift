@@ -60,4 +60,32 @@ enum NewsService {
         }
         return try decoder.decode([Article].self, from: data)
     }
+
+    /// Fetch a personalised feed from the backend recommendation pipeline.
+    static func fetchFeed(
+        userID: String,
+        sessionSeen: [UUID],
+        count: Int = 30
+    ) async throws -> [Article] {
+        var components = URLComponents(string: "\(baseURL)/feed")!
+        components.queryItems = [
+            URLQueryItem(name: "user_id", value: userID),
+            URLQueryItem(name: "count", value: String(count)),
+        ]
+        if !sessionSeen.isEmpty {
+            let seen = sessionSeen.map(\.uuidString).joined(separator: ",")
+            components.queryItems?.append(URLQueryItem(name: "session_seen", value: seen))
+        }
+        guard let url = components.url else { throw URLError(.badURL) }
+
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 15
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        return try decoder.decode([Article].self, from: data)
+    }
 }

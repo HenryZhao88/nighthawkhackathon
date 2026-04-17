@@ -22,8 +22,10 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 from typing import Optional
 
+from pydantic import BaseModel
 from scraper import scrape_all
 from cache import ArticleCache
+from recommender import build_feed, update_profile
 
 cache = ArticleCache()
 limiter = Limiter(key_func=get_remote_address)
@@ -64,13 +66,59 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Public API: any client may GET. No other methods are exposed.
+# Public API: GET for reads, POST for interaction ingestion.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["GET"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+
+# ---------------------------------------------------------------------------
+# Request / response models for the recommendation endpoints
+# ---------------------------------------------------------------------------
+
+class Interaction(BaseModel):
+    article_id: str
+    interaction: str
+    dwell_ms: int = 0
+    timestamp: str
+
+class InteractionBatch(BaseModel):
+    user_id: str
+    interactions: list[Interaction]
+
+
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
+
+@app.post("/interactions")
+@limiter.limit("120/minute")
+async def post_interactions(request: Request, body: InteractionBatch):
+    """Ingest a batch of user interaction signals and recompute the profile."""
+    recorded = cache.db.record_interactions(
+        body.user_id,
+        [i.model_dump() for i in body.interactions],
+    )
+    # Recompute profile in the background — fast enough for ~2000 interactions
+    update_profile(cache.db, body.user_id)
+    return {"recorded": recorded}
+
+
+@app.get("/feed")
+@limiter.limit("60/minute")
+async def get_feed(
+    request: Request,
+    user_id: str = Query(default=""),
+    session_seen: str = Query(default=""),
+    count: int = Query(default=30, ge=1, le=100),
+):
+    """Return a personalised feed ranked by the 5-stage pipeline."""
+    seen_ids = [s.strip() for s in session_seen.split(",") if s.strip()]
+    ranked = build_feed(cache.db, user_id, seen_ids, count)
+    return ranked
 
 
 @app.get("/articles")

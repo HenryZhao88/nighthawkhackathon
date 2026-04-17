@@ -38,6 +38,23 @@ CREATE TABLE IF NOT EXISTS bias_cache (
     article_id TEXT PRIMARY KEY,
     score      REAL NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS user_interactions (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     TEXT NOT NULL,
+    article_id  TEXT NOT NULL,
+    interaction TEXT NOT NULL,
+    dwell_ms    INTEGER DEFAULT 0,
+    created_at  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_interactions_user ON user_interactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_interactions_time ON user_interactions(created_at DESC);
+
+CREATE TABLE IF NOT EXISTS user_profiles (
+    user_id    TEXT PRIMARY KEY,
+    profile    TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
 """
 
 
@@ -135,6 +152,63 @@ class ArticleDB:
                 "ON CONFLICT(article_id) DO UPDATE SET score=excluded.score",
                 (article_id, score),
             )
+
+
+    # ------------------------------------------------------------------
+    # User interactions
+
+    def record_interactions(self, user_id: str, interactions: list[dict]) -> int:
+        with self._lock:
+            self._conn.executemany(
+                """
+                INSERT INTO user_interactions (user_id, article_id, interaction, dwell_ms, created_at)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                [
+                    (user_id, i["article_id"], i["interaction"],
+                     i.get("dwell_ms", 0), i["timestamp"])
+                    for i in interactions
+                ],
+            )
+        return len(interactions)
+
+    def get_user_interactions(self, user_id: str, limit: int = 2000) -> list[dict]:
+        with self._lock:
+            cur = self._conn.execute(
+                "SELECT article_id, interaction, dwell_ms, created_at "
+                "FROM user_interactions WHERE user_id = ? "
+                "ORDER BY created_at DESC LIMIT ?",
+                (user_id, limit),
+            )
+            return [
+                {
+                    "article_id": r["article_id"],
+                    "interaction": r["interaction"],
+                    "dwell_ms": r["dwell_ms"],
+                    "created_at": r["created_at"],
+                }
+                for r in cur.fetchall()
+            ]
+
+    # ------------------------------------------------------------------
+    # User profiles (cached recommendation state)
+
+    def upsert_profile(self, user_id: str, profile_json: str) -> None:
+        now = datetime.now(timezone.utc).isoformat()
+        with self._lock:
+            self._conn.execute(
+                "INSERT INTO user_profiles (user_id, profile, updated_at) "
+                "VALUES (?, ?, ?) "
+                "ON CONFLICT(user_id) DO UPDATE SET profile=excluded.profile, updated_at=excluded.updated_at",
+                (user_id, profile_json, now),
+            )
+
+    def get_profile(self, user_id: str) -> Optional[str]:
+        with self._lock:
+            row = self._conn.execute(
+                "SELECT profile FROM user_profiles WHERE user_id = ?", (user_id,)
+            ).fetchone()
+        return row["profile"] if row else None
 
 
 def _row_to_dict(r: sqlite3.Row) -> dict:
