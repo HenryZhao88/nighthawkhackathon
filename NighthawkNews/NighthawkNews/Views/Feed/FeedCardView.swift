@@ -5,6 +5,9 @@ struct FeedCardView: View {
     let safeArea: EdgeInsets          // real measured insets from FeedView's GeometryReader
     @EnvironmentObject var store: ArticleStore
 
+    /// Shows the heart animation overlay on double-tap.
+    @State private var showLikeAnimation = false
+
     private var isLiked: Bool { store.likedIDs.contains(article.id) }
     private var isBookmarked: Bool { store.bookmarkedIDs.contains(article.id) }
 
@@ -45,10 +48,6 @@ struct FeedCardView: View {
             // MARK: - Full-bleed background + navigation tap target
             NavigationLink(value: article) {
                 ZStack(alignment: .bottom) {
-                    // Color.clear anchors layout to the card's proposed frame.
-                    // The image is overlaid onto that anchor and clipped to it,
-                    // breaking the layout cycle that causes filled AsyncImages to
-                    // overflow their parent's bounds.
                     Color.clear
                         .overlay {
                             feedImage
@@ -56,7 +55,6 @@ struct FeedCardView: View {
                         .clipped()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                    // Gradient darkens the lower portion for legibility
                     LinearGradient(
                         colors: [
                             Color.black.opacity(0.0),
@@ -68,7 +66,6 @@ struct FeedCardView: View {
                     )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                    // Text — dynamically spaced above tab bar
                     VStack(alignment: .leading, spacing: 8) {
                         Text(article.source.uppercased())
                             .font(.caption.weight(.bold))
@@ -89,12 +86,44 @@ struct FeedCardView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 16)
-                    .padding(.trailing, 76)          // clear the action buttons
+                    .padding(.trailing, 76)
                     .padding(.bottom, bottomClearance)
                 }
             }
             .buttonStyle(.plain)
             .contentShape(Rectangle())
+
+            // MARK: - Double-tap to like (Instagram-style heart overlay)
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture(count: 2) {
+                    if !isLiked {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                            store.likeArticle(id: article.id)
+                        }
+                    }
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        showLikeAnimation = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            showLikeAnimation = false
+                        }
+                    }
+                }
+                .allowsHitTesting(true)
+
+            // Heart animation overlay
+            if showLikeAnimation {
+                Image(systemName: "heart.fill")
+                    .font(.system(size: 80))
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.4), radius: 8, x: 0, y: 4)
+                    .scaleEffect(showLikeAnimation ? 1.0 : 0.5)
+                    .opacity(showLikeAnimation ? 1.0 : 0)
+                    .transition(.scale.combined(with: .opacity))
+                    .allowsHitTesting(false)
+            }
 
             // MARK: - Action buttons (sit on top — don't trigger navigation)
             VStack(spacing: 24) {
