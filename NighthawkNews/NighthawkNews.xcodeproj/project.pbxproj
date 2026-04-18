@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07E625605BDA15B3B8CDE652 /* GlassTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B380F706BBEF129D319C70AD /* GlassTabBar.swift */; };
 		0C183FC7E422F8AED6E9993A /* NewsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC1E056CB8BDF347A06ED32 /* NewsService.swift */; };
 		0F1C63690E5886AD466AF1A2 /* LikedArticlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5385A64CD7C1928C183F2C /* LikedArticlesView.swift */; };
 		0FC86366D4CC88CB9C3313B7 /* Date+TimeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF94542519B5FBCE2563FF7B /* Date+TimeAgo.swift */; };
+		230F8A71B73BA56B133EAB70 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C902C44DCF0D632277555C67 /* PageViewController.swift */; };
 		2832E9B20CCF2B53288EBB0C /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF0783074E2338841F8C758 /* SignInView.swift */; };
 		3034E9CB4F7497D06389D532 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A99C1D315110BC337799D06 /* Assets.xcassets */; };
 		3381EB4BF0A7BAAEE5B4A592 /* DwellTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B3A056D0D424C7225BEB1C /* DwellTracker.swift */; };
@@ -56,7 +58,9 @@
 		A29ED36F4DB058470CC4F7C1 /* NighthawkNews.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NighthawkNews.entitlements; sourceTree = "<group>"; };
 		A716FAB66AFCCCF8EA24D8B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B28B81ABD70890F566EDD7E4 /* CategoryFilterBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryFilterBar.swift; sourceTree = "<group>"; };
+		B380F706BBEF129D319C70AD /* GlassTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassTabBar.swift; sourceTree = "<group>"; };
 		C6810A9CCB07663DB2CAFA35 /* ArticleStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleStore.swift; sourceTree = "<group>"; };
+		C902C44DCF0D632277555C67 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 		CAF0783074E2338841F8C758 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		CE79F853E9F4C2C6DE90197C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		CF25ED7B805869EBA42C2A29 /* Article.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Article.swift; sourceTree = "<group>"; };
@@ -163,7 +167,9 @@
 		764DAD193D1B8ED7EFEC7F23 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B380F706BBEF129D319C70AD /* GlassTabBar.swift */,
 				0AD0313E552AD155DABE0A5A /* MainTabView.swift */,
+				C902C44DCF0D632277555C67 /* PageViewController.swift */,
 				4B44F6CAC8F6715B166495CF /* Feed */,
 				558D578C7895448C179234A8 /* Home */,
 				39E45507A5EF1CF4A842894A /* Settings */,
@@ -295,6 +301,7 @@
 				3381EB4BF0A7BAAEE5B4A592 /* DwellTracker.swift in Sources */,
 				78681EFA614979A838F0829D /* FeedCardView.swift in Sources */,
 				CAF6FCBD0DE7822C0703B1AA /* FeedView.swift in Sources */,
+				07E625605BDA15B3B8CDE652 /* GlassTabBar.swift in Sources */,
 				98737040EEC7278CAC46AD9E /* HomeView.swift in Sources */,
 				E51ADEA57551BC96C83DAB6B /* InteractionService.swift in Sources */,
 				0F1C63690E5886AD466AF1A2 /* LikedArticlesView.swift in Sources */,
@@ -302,6 +309,7 @@
 				458138575523525C5F6B066F /* MockData.swift in Sources */,
 				0C183FC7E422F8AED6E9993A /* NewsService.swift in Sources */,
 				657B12F0EBA76F7D7BE4688A /* NighthawkApp.swift in Sources */,
+				230F8A71B73BA56B133EAB70 /* PageViewController.swift in Sources */,
 				CA4D6C8E476198E341B278AA /* PoliticalBiasBar.swift in Sources */,
 				E331EE17AD6044EE2E68E75C /* RecommendationEngine.swift in Sources */,
 				4A66D1A2A7A7EF15D64B2287 /* SettingsView.swift in Sources */,
