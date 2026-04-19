@@ -2,7 +2,7 @@ import Foundation
 
 extension Date {
     func timeAgoString() -> String {
-        let seconds = Int(-timeIntervalSinceNow)
+        let seconds = max(0, Int(-timeIntervalSinceNow))
         if seconds < 60 { return "just now" }
         let minutes = seconds / 60
         if minutes < 60 { return "\(minutes)m ago" }

@@ -100,13 +100,13 @@ enum RecommendationEngine {
             let chosen = pool.remove(at: idx)
             picked.append(chosen.article)
 
-            // Apply damping to same category/source for the next `dampingWindow` picks.
-            catCooldown[chosen.article.category] = dampingWindow
-            srcCooldown[chosen.article.source]   = dampingWindow
-
             // Decrement all existing cooldowns by 1.
             catCooldown = catCooldown.mapValues { max(0, $0 - 1) }
             srcCooldown = srcCooldown.mapValues { max(0, $0 - 1) }
+
+            // Apply damping to same category/source for the next `dampingWindow` picks.
+            catCooldown[chosen.article.category] = dampingWindow
+            srcCooldown[chosen.article.source]   = dampingWindow
         }
 
         return picked

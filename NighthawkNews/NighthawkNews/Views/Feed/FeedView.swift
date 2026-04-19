@@ -13,6 +13,9 @@ struct FeedView: View {
     /// Whether the initial async feed load has completed.
     @State private var hasLoadedBackendFeed = false
 
+    /// Prevent multiple feed loads from stacking.
+    @State private var fetchTask: Task<Void, Never>?
+
     var body: some View {
         NavigationStack {
             GeometryReader { geo in
@@ -22,17 +25,12 @@ struct FeedView: View {
                             FeedCardView(article: article, safeArea: geo.safeAreaInsets)
                                 .frame(width: geo.size.width, height: geo.size.height)
                                 .id(article.id)
-                                .onAppear {
-                                    onCardAppear(article)
-                                }
-                                .onDisappear {
-                                    onCardDisappear(article)
-                                }
                         }
                     }
                     .scrollTargetLayout()
                 }
                 .scrollTargetBehavior(.paging)
+                .scrollPosition(id: $currentArticleID)
             }
             .ignoresSafeArea()
             .toolbar(.hidden, for: .navigationBar)
@@ -41,21 +39,15 @@ struct FeedView: View {
             }
             .onAppear { regenerateIfNeeded() }
             .onChange(of: store.articles.count) { _, _ in regenerate() }
-        }
-    }
-
-    // MARK: - Dwell tracking
-
-    private func onCardAppear(_ article: Article) {
-        currentArticleID = article.id
-        DwellTracker.shared.startTracking(article.id)
-        store.markSeenInSession(id: article.id)
-    }
-
-    private func onCardDisappear(_ article: Article) {
-        DwellTracker.shared.stopTracking(article.id)
-        if currentArticleID == article.id {
-            currentArticleID = nil
+            .onChange(of: currentArticleID) { oldID, newID in
+                if let oldID {
+                    DwellTracker.shared.stopTracking(oldID)
+                }
+                if let newID {
+                    DwellTracker.shared.startTracking(newID)
+                    store.markSeenInSession(id: newID)
+                }
+            }
         }
     }
 
@@ -66,13 +58,15 @@ struct FeedView: View {
     }
 
     private func regenerate() {
+        fetchTask?.cancel()
+        
         // Show local feed immediately for instant UX
         feed = store.generateLocalFeed()
 
         // Then fetch the backend-personalised feed asynchronously
-        Task {
+        fetchTask = Task {
             let backendFeed = await store.generateFeed()
-            if !backendFeed.isEmpty {
+            if !Task.isCancelled, !backendFeed.isEmpty {
                 feed = backendFeed
                 hasLoadedBackendFeed = true
             }

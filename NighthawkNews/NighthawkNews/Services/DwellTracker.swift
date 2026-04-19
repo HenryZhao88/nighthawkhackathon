@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 /// Tracks how long a user dwells on each article and classifies the signal.
 ///
@@ -12,7 +13,45 @@ final class DwellTracker: ObservableObject {
     /// Active timers keyed by article ID.
     private var startTimes: [UUID: Date] = [:]
 
-    private init() {}
+    /// Paused accumulated durations keyed by article ID.
+    private var pausedDurations: [UUID: TimeInterval] = [:]
+
+    private var backgroundObserver: Any?
+    private var foregroundObserver: Any?
+
+    private init() {
+        backgroundObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.willResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.pauseAll()
+        }
+
+        foregroundObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.resumeAll()
+        }
+    }
+
+    private func pauseAll() {
+        let now = Date()
+        for (id, start) in startTimes {
+            let elapsed = now.timeIntervalSince(start)
+            pausedDurations[id, default: 0] += elapsed
+        }
+        startTimes.removeAll()
+    }
+
+    private func resumeAll() {
+        let now = Date()
+        for id in pausedDurations.keys {
+            startTimes[id] = now
+        }
+    }
 
     /// Begin tracking dwell time for an article.
     func startTracking(_ articleID: UUID) {
@@ -24,8 +63,15 @@ final class DwellTracker: ObservableObject {
     /// or nil if tracking was never started for this ID.
     @discardableResult
     func stopTracking(_ articleID: UUID) -> (interaction: String, dwellMs: Int)? {
-        guard let start = startTimes.removeValue(forKey: articleID) else { return nil }
-        let dwellSeconds = -start.timeIntervalSinceNow
+        let pausedDuration = pausedDurations.removeValue(forKey: articleID) ?? 0
+        let start = startTimes.removeValue(forKey: articleID)
+
+        guard start != nil || pausedDuration > 0 else { return nil }
+
+        var dwellSeconds: TimeInterval = pausedDuration
+        if let start {
+            dwellSeconds += -start.timeIntervalSinceNow
+        }
         let dwellMs = Int(dwellSeconds * 1000)
 
         let interaction: String

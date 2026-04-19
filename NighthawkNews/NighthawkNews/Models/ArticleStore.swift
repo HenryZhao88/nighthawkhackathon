@@ -80,6 +80,7 @@ class ArticleStore: ObservableObject {
             while !Task.isCancelled {
                 await refresh()
                 try? await Task.sleep(for: .seconds(30 * 60))
+                if Task.isCancelled { break }
             }
         }
     }

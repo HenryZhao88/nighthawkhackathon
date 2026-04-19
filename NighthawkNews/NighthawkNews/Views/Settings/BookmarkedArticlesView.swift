@@ -13,7 +13,7 @@ struct BookmarkedArticlesView: View {
                 )
             } else {
                 List(store.bookmarkedArticles) { article in
-                    NavigationLink(value: article) {
+                    NavigationLink(destination: ArticleDetailView(article: article)) {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(article.title)
                                 .font(.headline)
@@ -30,9 +30,6 @@ struct BookmarkedArticlesView: View {
                     }
                 }
             }
-        }
-        .navigationDestination(for: Article.self) { article in
-            ArticleDetailView(article: article)
         }
         .navigationTitle("Bookmarks")
     }

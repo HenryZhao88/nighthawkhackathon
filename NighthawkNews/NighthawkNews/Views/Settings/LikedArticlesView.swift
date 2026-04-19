@@ -13,15 +13,13 @@ struct LikedArticlesView: View {
                 )
             } else {
                 List(store.likedArticles) { article in
-                    NavigationLink(value: article) {
+                    NavigationLink(destination: ArticleDetailView(article: article)) {
                         ArticleRow(article: article)
                     }
                 }
             }
         }
-        .navigationDestination(for: Article.self) { article in
-            ArticleDetailView(article: article)
-        }
+
         .navigationTitle("Liked Articles")
     }
 }

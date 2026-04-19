@@ -98,6 +98,7 @@ final class InteractionService: ObservableObject {
         flushTask = Task {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(Self.flushInterval))
+                if Task.isCancelled { break }
                 await flush()
             }
         }
@@ -110,8 +111,16 @@ final class InteractionService: ObservableObject {
             queue: .main
         ) { [weak self] _ in
             guard let self else { return }
+            var bgTask: UIBackgroundTaskIdentifier = .invalid
+            bgTask = UIApplication.shared.beginBackgroundTask(withName: "InteractionFlush") {
+                UIApplication.shared.endBackgroundTask(bgTask)
+                bgTask = .invalid
+            }
             Task { @MainActor in
                 await self.flush()
+                if bgTask != .invalid {
+                    UIApplication.shared.endBackgroundTask(bgTask)
+                }
             }
         }
     }
@@ -119,16 +128,20 @@ final class InteractionService: ObservableObject {
     // MARK: - Disk persistence
 
     private static var fileURL: URL {
-        let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         return dir.appendingPathComponent(fileName)
     }
 
     private func saveToDisk() {
-        do {
-            let data = try JSONEncoder().encode(pending)
-            try data.write(to: Self.fileURL, options: .atomic)
-        } catch {
-            print("[InteractionService] save failed: \(error)")
+        let dataToSave = pending
+        let url = Self.fileURL
+        Task.detached(priority: .background) {
+            do {
+                let data = try JSONEncoder().encode(dataToSave)
+                try data.write(to: url, options: .atomic)
+            } catch {
+                print("[InteractionService] save failed: \(error)")
+            }
         }
     }
 

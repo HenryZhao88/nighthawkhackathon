@@ -13,7 +13,7 @@ struct ViewedArticlesView: View {
                 )
             } else {
                 List(store.viewedArticles) { article in
-                    NavigationLink(value: article) {
+                    NavigationLink(destination: ArticleDetailView(article: article)) {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(article.title)
                                 .font(.headline)
@@ -30,9 +30,6 @@ struct ViewedArticlesView: View {
                     }
                 }
             }
-        }
-        .navigationDestination(for: Article.self) { article in
-            ArticleDetailView(article: article)
         }
         .navigationTitle("Previously Viewed")
     }

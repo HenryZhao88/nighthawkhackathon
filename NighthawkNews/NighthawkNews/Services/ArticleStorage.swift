@@ -6,7 +6,7 @@ enum ArticleStorage {
     private static let fileName = "articles_cache.json"
 
     private static var fileURL: URL {
-        let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         return dir.appendingPathComponent(fileName)
     }
 
