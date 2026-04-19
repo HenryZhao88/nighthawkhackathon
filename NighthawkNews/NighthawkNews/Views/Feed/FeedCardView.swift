@@ -12,6 +12,12 @@ struct FeedCardView: View {
     /// Used to spawn the heart at the tap location.
     @State private var tapLocation: CGPoint = .zero
 
+    /// Drives the pop-scale curve of the heart burst independently of visibility,
+    /// so we can scale up, settle, and fade out cleanly.
+    @State private var heartScale: CGFloat = 0.2
+    @State private var heartOpacity: Double = 0
+    @State private var heartRotation: Double = -12
+
     private var isLiked: Bool { store.likedIDs.contains(article.id) }
     private var isBookmarked: Bool { store.bookmarkedIDs.contains(article.id) }
 
@@ -109,12 +115,12 @@ struct FeedCardView: View {
             // Heart animation overlay — positioned at the tap location.
             if showLikeAnimation {
                 Image(systemName: "heart.fill")
-                    .font(.system(size: 80))
-                    .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.4), radius: 8, x: 0, y: 4)
-                    .scaleEffect(showLikeAnimation ? 1.0 : 0.5)
-                    .opacity(showLikeAnimation ? 1.0 : 0)
-                    .transition(.scale.combined(with: .opacity))
+                    .font(.system(size: 110, weight: .bold))
+                    .foregroundStyle(.red)
+                    .shadow(color: .black.opacity(0.35), radius: 12, x: 0, y: 6)
+                    .scaleEffect(heartScale)
+                    .rotationEffect(.degrees(heartRotation))
+                    .opacity(heartOpacity)
                     .position(tapLocation)
                     .allowsHitTesting(false)
             }
@@ -147,18 +153,41 @@ struct FeedCardView: View {
 
     private func handleDoubleTap(at location: CGPoint) {
         tapLocation = location
+
         if !isLiked {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                store.likeArticle(id: article.id)
+            store.likeArticle(id: article.id)
+        }
+
+        // Reset state, then drive a pop → settle → fade sequence.
+        heartScale = 0.2
+        heartOpacity = 0
+        heartRotation = Double.random(in: -14 ... -6)
+        showLikeAnimation = true
+
+        // Pop up past target size for an overshoot feel.
+        withAnimation(.spring(response: 0.28, dampingFraction: 0.55)) {
+            heartScale = 1.25
+            heartOpacity = 1.0
+            heartRotation = 0
+        }
+
+        // Settle back to natural size.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) {
+            withAnimation(.easeOut(duration: 0.18)) {
+                heartScale = 1.0
             }
         }
-        withAnimation(.easeInOut(duration: 0.3)) {
-            showLikeAnimation = true
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            withAnimation(.easeOut(duration: 0.3)) {
-                showLikeAnimation = false
+
+        // Float up slightly and fade out.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
+            withAnimation(.easeIn(duration: 0.35)) {
+                heartOpacity = 0
+                heartScale = 1.4
             }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) {
+            showLikeAnimation = false
         }
     }
 }

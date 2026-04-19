@@ -29,10 +29,10 @@ struct BookmarkedArticlesView: View {
                         .padding(.vertical, 4)
                     }
                 }
-                .navigationDestination(for: Article.self) { article in
-                    ArticleDetailView(article: article)
-                }
             }
+        }
+        .navigationDestination(for: Article.self) { article in
+            ArticleDetailView(article: article)
         }
         .navigationTitle("Bookmarks")
     }

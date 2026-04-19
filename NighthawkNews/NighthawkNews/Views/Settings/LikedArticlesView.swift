@@ -17,10 +17,10 @@ struct LikedArticlesView: View {
                         ArticleRow(article: article)
                     }
                 }
-                .navigationDestination(for: Article.self) { article in
-                    ArticleDetailView(article: article)
-                }
             }
+        }
+        .navigationDestination(for: Article.self) { article in
+            ArticleDetailView(article: article)
         }
         .navigationTitle("Liked Articles")
     }
