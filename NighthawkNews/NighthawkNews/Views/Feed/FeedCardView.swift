@@ -8,6 +8,10 @@ struct FeedCardView: View {
     /// Shows the heart animation overlay on double-tap.
     @State private var showLikeAnimation = false
 
+    /// Where the user double-tapped, in the card's local coordinate space.
+    /// Used to spawn the heart at the tap location.
+    @State private var tapLocation: CGPoint = .zero
+
     private var isLiked: Bool { store.likedIDs.contains(article.id) }
     private var isBookmarked: Bool { store.bookmarkedIDs.contains(article.id) }
 
@@ -92,28 +96,17 @@ struct FeedCardView: View {
             }
             .buttonStyle(.plain)
             .contentShape(Rectangle())
+            // Double-tap lives alongside the NavigationLink so it catches the
+            // gesture without swallowing single taps (previously a Color.clear
+            // overlay ate every tap, so single-tap navigation never fired).
+            .highPriorityGesture(
+                SpatialTapGesture(count: 2)
+                    .onEnded { value in
+                        handleDoubleTap(at: value.location)
+                    }
+            )
 
-            // MARK: - Double-tap to like (Instagram-style heart overlay)
-            Color.clear
-                .contentShape(Rectangle())
-                .onTapGesture(count: 2) {
-                    if !isLiked {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                            store.likeArticle(id: article.id)
-                        }
-                    }
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showLikeAnimation = true
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                        withAnimation(.easeOut(duration: 0.3)) {
-                            showLikeAnimation = false
-                        }
-                    }
-                }
-                .allowsHitTesting(true)
-
-            // Heart animation overlay
+            // Heart animation overlay — positioned at the tap location.
             if showLikeAnimation {
                 Image(systemName: "heart.fill")
                     .font(.system(size: 80))
@@ -122,6 +115,7 @@ struct FeedCardView: View {
                     .scaleEffect(showLikeAnimation ? 1.0 : 0.5)
                     .opacity(showLikeAnimation ? 1.0 : 0)
                     .transition(.scale.combined(with: .opacity))
+                    .position(tapLocation)
                     .allowsHitTesting(false)
             }
 
@@ -148,6 +142,23 @@ struct FeedCardView: View {
             .padding(.trailing, 16)
             .padding(.bottom, bottomClearance)
             .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+    }
+
+    private func handleDoubleTap(at location: CGPoint) {
+        tapLocation = location
+        if !isLiked {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                store.likeArticle(id: article.id)
+            }
+        }
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showLikeAnimation = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            withAnimation(.easeOut(duration: 0.3)) {
+                showLikeAnimation = false
+            }
         }
     }
 }
