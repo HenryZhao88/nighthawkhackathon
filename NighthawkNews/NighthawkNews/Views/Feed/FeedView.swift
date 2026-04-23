@@ -37,14 +37,25 @@ struct FeedView: View {
             .navigationDestination(for: Article.self) { article in
                 ArticleDetailView(article: article)
             }
-            .onAppear { regenerateIfNeeded() }
+            .onAppear {
+                regenerateIfNeeded()
+                if let currentArticleID {
+                    DwellTracker.shared.startTracking(currentArticleID, context: .feed)
+                }
+            }
+            .onDisappear {
+                if let currentArticleID {
+                    DwellTracker.shared.stopTracking(currentArticleID, context: .feed)
+                }
+                fetchTask?.cancel()
+            }
             .onChange(of: store.articles.count) { _, _ in regenerate() }
             .onChange(of: currentArticleID) { oldID, newID in
                 if let oldID {
-                    DwellTracker.shared.stopTracking(oldID)
+                    DwellTracker.shared.stopTracking(oldID, context: .feed)
                 }
                 if let newID {
-                    DwellTracker.shared.startTracking(newID)
+                    DwellTracker.shared.startTracking(newID, context: .feed)
                     store.markSeenInSession(id: newID)
                 }
             }
