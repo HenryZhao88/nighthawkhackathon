@@ -21,6 +21,7 @@ final class InteractionService: ObservableObject {
     private var pending: [PendingInteraction] = []
     private var flushTask: Task<Void, Never>?
     private var backgroundObserver: Any?
+    private var saveGeneration = 0
 
     private init() {
         loadFromDisk()
@@ -65,7 +66,9 @@ final class InteractionService: ObservableObject {
 
     private func sendToBackend(userID: String, interactions: [PendingInteraction]) async throws {
         let baseURL = NewsService.baseURL
-        guard let url = URL(string: "\(baseURL)/interactions") else { return }
+        guard let url = URL(string: "\(baseURL)/interactions") else {
+            throw URLError(.badURL)
+        }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -133,15 +136,16 @@ final class InteractionService: ObservableObject {
     }
 
     private func saveToDisk() {
+        saveGeneration += 1
+        let generation = saveGeneration
         let dataToSave = pending
         let url = Self.fileURL
         Task.detached(priority: .background) {
-            do {
-                let data = try JSONEncoder().encode(dataToSave)
-                try data.write(to: url, options: .atomic)
-            } catch {
-                print("[InteractionService] save failed: \(error)")
-            }
+            await PendingInteractionDiskWriter.shared.save(
+                dataToSave,
+                generation: generation,
+                to: url
+            )
         }
     }
 
@@ -160,4 +164,22 @@ private struct PendingInteraction: Codable {
     let interaction: String
     let dwellMs: Int
     let timestamp: String
+}
+
+private actor PendingInteractionDiskWriter {
+    static let shared = PendingInteractionDiskWriter()
+
+    private var latestGeneration = 0
+
+    func save(_ pending: [PendingInteraction], generation: Int, to url: URL) {
+        guard generation >= latestGeneration else { return }
+        latestGeneration = generation
+
+        do {
+            let data = try JSONEncoder().encode(pending)
+            try data.write(to: url, options: .atomic)
+        } catch {
+            print("[InteractionService] save failed: \(error)")
+        }
+    }
 }
