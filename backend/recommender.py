@@ -44,6 +44,12 @@ W_TOPIC    = 0.6
 # MMR lambda (Stage 4) — higher = favour relevance over diversity
 MMR_LAMBDA = 0.7
 
+# Personalisation should warm up gradually. One like should nudge the feed,
+# not turn it into a single-category wall.
+PROFILE_WARMUP_INTERACTIONS = 40
+MMR_CANDIDATE_MULTIPLIER = 4
+MMR_CANDIDATE_FLOOR = 60
+
 # Decay half-lives
 RECENCY_HALF_LIFE_HOURS = 18.0
 AFFINITY_HALF_LIFE_DAYS = 3.0
@@ -208,7 +214,11 @@ def generate_feed(
         scored.append((a, relevance, features))
 
     # -- Stage 4: MMR re-ranking for diversity --
-    ranked = _stage4_mmr(scored, count)
+    mmr_count = min(
+        len(scored),
+        max(count * MMR_CANDIDATE_MULTIPLIER, min(MMR_CANDIDATE_FLOOR, len(scored))),
+    )
+    ranked = _stage4_mmr(scored, mmr_count)
 
     # -- Stage 5: Thompson sampling for exploration --
     final = _stage5_thompson(ranked, profile, count)
@@ -234,6 +244,7 @@ def _stage2_features(article: dict, profile: dict) -> dict:
     src_aff = profile.get("source_affinity", {})
     bias_pref = profile.get("bias_pref", 0.0)
     topic_tf = profile.get("topic_tf", {})
+    profile_strength = _profile_strength(profile)
 
     # Recency score: exponential decay with 18-hour half-life
     try:
@@ -246,15 +257,16 @@ def _stage2_features(article: dict, profile: dict) -> dict:
     recency = math.pow(0.5, hours_old / RECENCY_HALF_LIFE_HOURS)
 
     # Category match
-    category_match = cat_aff.get(article.get("category", ""), 0.0)
+    category_match = cat_aff.get(article.get("category", ""), 0.0) * profile_strength
 
     # Source match
-    source_match = src_aff.get(article.get("source", ""), 0.0)
+    source_match = src_aff.get(article.get("source", ""), 0.0) * profile_strength
 
     # Bias alignment: 1.0 when perfect match, 0.0 when maximally opposed
     article_bias = article.get("bias")
     if article_bias is not None:
-        bias_align = max(0.0, 1.0 - abs(article_bias - bias_pref))
+        raw_bias_align = max(0.0, 1.0 - abs(article_bias - bias_pref))
+        bias_align = 0.5 + (raw_bias_align - 0.5) * profile_strength
     else:
         bias_align = 0.5  # neutral for unrated articles
 
@@ -267,7 +279,11 @@ def _stage2_features(article: dict, profile: dict) -> dict:
         intersection = article_tokens & profile_tokens
         # Weighted overlap: sum of TF weights for matching tokens
         if intersection:
-            topic_sim = sum(topic_tf.get(t, 0) for t in intersection) / len(article_tokens)
+            topic_sim = (
+                sum(topic_tf.get(t, 0) for t in intersection)
+                / len(article_tokens)
+                * profile_strength
+            )
         else:
             topic_sim = 0.0
     else:
@@ -377,6 +393,7 @@ def _stage5_thompson(
 
     beta_params = profile.get("beta_params", {})
     interaction_count = profile.get("interaction_count", 0)
+    profile_strength = _profile_strength(profile)
 
     # Exploration weight: higher for new users, decays as they build history
     # At 0 interactions: 0.5 explore / 0.5 exploit
@@ -389,8 +406,8 @@ def _stage5_thompson(
     for article, relevance in ranked:
         cat = article.get("category", "")
         params = beta_params.get(cat, {"alpha": 1.0, "beta": 1.0})
-        alpha = params["alpha"]
-        beta_val = params["beta"]
+        alpha = 1.0 + (params["alpha"] - 1.0) * profile_strength
+        beta_val = 1.0 + (params["beta"] - 1.0) * profile_strength
 
         # Sample from Beta distribution
         thompson_sample = random.betavariate(alpha, beta_val)
@@ -417,6 +434,14 @@ def _normalise(raw: dict[str, float]) -> dict[str, float]:
     if max_val == 0:
         return {}
     return {k: v / max_val for k, v in raw.items()}
+
+
+def _profile_strength(profile: dict) -> float:
+    """Return 0..1 confidence for how strongly to personalise this feed."""
+    interaction_count = max(0, int(profile.get("interaction_count", 0) or 0))
+    if interaction_count == 0:
+        return 0.0
+    return min(1.0, math.log1p(interaction_count) / math.log1p(PROFILE_WARMUP_INTERACTIONS))
 
 
 # ---------------------------------------------------------------------------

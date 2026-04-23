@@ -17,6 +17,25 @@ enum NewsService {
         UserDefaults.standard.string(forKey: "NEWSHAWK_API_BASE_URL") ?? defaultBaseURL
     }
 
+    private static func components(for endpoint: String) throws -> URLComponents {
+        let trimmedBase = baseURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard var components = URLComponents(string: trimmedBase),
+              components.scheme != nil,
+              components.host != nil
+        else {
+            throw URLError(.badURL)
+        }
+
+        let slashSet = CharacterSet(charactersIn: "/")
+        let basePath = components.path.trimmingCharacters(in: slashSet)
+        let endpointPath = endpoint.trimmingCharacters(in: slashSet)
+        let combinedPath = [basePath, endpointPath]
+            .filter { !$0.isEmpty }
+            .joined(separator: "/")
+        components.path = "/" + combinedPath
+        return components
+    }
+
     // -----------------------------------------------------------------------
     // Decoder — handles ISO-8601 dates from the backend
     // -----------------------------------------------------------------------
@@ -44,7 +63,7 @@ enum NewsService {
     // Fetch
     // -----------------------------------------------------------------------
     static func fetchArticles(category: String? = nil) async throws -> [Article] {
-        var components = URLComponents(string: "\(baseURL)/articles")!
+        var components = try components(for: "articles")
         if let category, category != "All" {
             components.queryItems = [URLQueryItem(name: "category", value: category)]
         }
@@ -67,7 +86,7 @@ enum NewsService {
         sessionSeen: [UUID],
         count: Int = 30
     ) async throws -> [Article] {
-        var components = URLComponents(string: "\(baseURL)/feed")!
+        var components = try components(for: "feed")
         components.queryItems = [
             URLQueryItem(name: "user_id", value: userID),
             URLQueryItem(name: "count", value: String(count)),
