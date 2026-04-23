@@ -9,7 +9,6 @@ On Fly.io this file lives on a mounted volume so it survives deploys/restarts.
 """
 
 import os
-import json
 import sqlite3
 import threading
 from datetime import datetime, timezone
@@ -49,6 +48,8 @@ CREATE TABLE IF NOT EXISTS user_interactions (
 );
 CREATE INDEX IF NOT EXISTS idx_interactions_user ON user_interactions(user_id);
 CREATE INDEX IF NOT EXISTS idx_interactions_time ON user_interactions(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_interactions_user_time
+    ON user_interactions(user_id, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS user_profiles (
     user_id    TEXT PRIMARY KEY,
