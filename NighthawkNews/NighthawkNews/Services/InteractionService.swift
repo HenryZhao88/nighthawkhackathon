@@ -159,7 +159,7 @@ final class InteractionService: ObservableObject {
 
 // MARK: - Pending interaction model
 
-private struct PendingInteraction: Codable {
+private struct PendingInteraction: Codable, Sendable {
     let articleID: String
     let interaction: String
     let dwellMs: Int
