@@ -41,3 +41,7 @@ class ArticleCache:
             return 0
         elapsed = (datetime.now(timezone.utc) - self._updated_at).total_seconds()
         return max(0, int(self.REFRESH_INTERVAL_SECONDS - elapsed))
+
+    @property
+    def is_stale(self) -> bool:
+        return self.next_refresh_in == 0
