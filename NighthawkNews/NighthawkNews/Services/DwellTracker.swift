@@ -10,11 +10,21 @@ import UIKit
 final class DwellTracker: ObservableObject {
     static let shared = DwellTracker()
 
+    enum Context: Hashable {
+        case feed
+        case detail
+    }
+
+    private struct TrackingKey: Hashable {
+        let articleID: UUID
+        let context: Context
+    }
+
     /// Active timers keyed by article ID.
-    private var startTimes: [UUID: Date] = [:]
+    private var startTimes: [TrackingKey: Date] = [:]
 
     /// Paused accumulated durations keyed by article ID.
-    private var pausedDurations: [UUID: TimeInterval] = [:]
+    private var pausedDurations: [TrackingKey: TimeInterval] = [:]
 
     private var backgroundObserver: Any?
     private var foregroundObserver: Any?
@@ -48,23 +58,26 @@ final class DwellTracker: ObservableObject {
 
     private func resumeAll() {
         let now = Date()
-        for id in pausedDurations.keys {
-            startTimes[id] = now
+        for key in pausedDurations.keys {
+            startTimes[key] = now
         }
     }
 
     /// Begin tracking dwell time for an article.
-    func startTracking(_ articleID: UUID) {
-        startTimes[articleID] = Date()
+    func startTracking(_ articleID: UUID, context: Context) {
+        let key = TrackingKey(articleID: articleID, context: context)
+        guard startTimes[key] == nil else { return }
+        startTimes[key] = Date()
     }
 
     /// Stop tracking and classify the dwell into an interaction signal.
     /// Returns the classified interaction type and dwell duration in ms,
     /// or nil if tracking was never started for this ID.
     @discardableResult
-    func stopTracking(_ articleID: UUID) -> (interaction: String, dwellMs: Int)? {
-        let pausedDuration = pausedDurations.removeValue(forKey: articleID) ?? 0
-        let start = startTimes.removeValue(forKey: articleID)
+    func stopTracking(_ articleID: UUID, context: Context) -> (interaction: String, dwellMs: Int)? {
+        let key = TrackingKey(articleID: articleID, context: context)
+        let pausedDuration = pausedDurations.removeValue(forKey: key) ?? 0
+        let start = startTimes.removeValue(forKey: key)
 
         guard start != nil || pausedDuration > 0 else { return nil }
 
