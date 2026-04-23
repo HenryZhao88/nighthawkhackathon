@@ -18,7 +18,6 @@ import random
 import re
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
-from typing import Optional
 
 from db import ArticleDB
 
@@ -56,9 +55,6 @@ AFFINITY_HALF_LIFE_DAYS = 3.0
 
 # How many tokens to keep per article for topic fingerprinting
 MAX_TOPIC_TOKENS = 20
-
-# Minimum word length for topic keywords
-MIN_KEYWORD_LEN = 4
 
 # Stop words to exclude from topic fingerprinting
 _STOP_WORDS = frozenset({
@@ -114,7 +110,6 @@ def compute_profile(interactions: list[dict], articles_by_id: dict[str, dict]) -
     bias_sum = 0.0
     bias_weight_sum = 0.0
     word_counts: Counter = Counter()
-    total_docs = 0
     engagement_by_cat: dict[str, dict] = defaultdict(lambda: {"pos": 0, "neg": 0})
 
     for ix in interactions:
@@ -157,7 +152,6 @@ def compute_profile(interactions: list[dict], articles_by_id: dict[str, dict]) -
             tokens = [t for t in tokens if t not in _STOP_WORDS]
             for t in tokens:
                 word_counts[t] += effective_w
-            total_docs += 1
 
         # Beta distribution tracking (positive engagement vs skips)
         if signal_w > 0:

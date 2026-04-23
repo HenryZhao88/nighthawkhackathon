@@ -4,6 +4,11 @@ docs
 .env
 backend/.env
 .DS_Store
+**/.DS_Store
+*.pyc
+__pycache__/
+*.xcuserstate
+**/xcuserdata/
 # SQLite DB + WAL/SHM sidecars
 backend/articles.db
 backend/articles.db-wal

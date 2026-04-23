@@ -4,7 +4,6 @@ import concurrent.futures
 import os
 import feedparser
 import uuid
-import time
 import trafilatura
 import urllib.request
 from datetime import datetime, timezone

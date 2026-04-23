@@ -5,11 +5,21 @@ enum MockData {
         Calendar.current.date(byAdding: .hour, value: -h, to: Date()) ?? Date()
     }
 
+    private static func stableID(_ sequence: UInt8) -> UUID {
+        UUID(uuid: (
+            0x6e, 0x65, 0x77, 0x73,
+            0x68, 0x61,
+            0x77, 0x6b,
+            0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, sequence
+        ))
+    }
+
     static let articles: [Article] = [
 
         // MARK: - Tech (4)
         Article(
-            id: UUID(),
+            id: stableID(1),
             title: "Apple Unveils M4 Ultra With Breakthrough Neural Engine Performance",
             excerpt: "Apple's latest chip pushes the boundary of on-device AI, delivering up to 40 trillion operations per second. The M4 Ultra redefines what's possible on desktop hardware without a cloud connection.",
             body: """
@@ -31,7 +41,7 @@ The chip will debut inside a new Mac Pro and a refreshed Mac Studio, both availa
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(2),
             title: "OpenAI Ships GPT-5 With Native Real-Time Video Understanding",
             excerpt: "GPT-5 can watch, describe, and reason about live video streams, marking a significant leap beyond text and static images. Early testers report the model narrating surgical procedures and sports plays with near-human accuracy.",
             body: """
@@ -53,7 +63,7 @@ Pricing for GPT-5 starts at $0.015 per 1,000 input tokens, roughly three times t
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(3),
             title: "Google DeepMind's Gemini 2 Ultra Tops Every Major AI Benchmark",
             excerpt: "In a sweeping evaluation across coding, reasoning, and scientific tasks, Gemini 2 Ultra outperformed every competing model available today. Google says the results reflect a new training paradigm it calls 'chain-of-thought distillation.'",
             body: """
@@ -75,7 +85,7 @@ Access is rolling out through Google AI Studio and the Gemini API over the comin
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(4),
             title: "SpaceX Successfully Tests Starship's Full Reusable Heat Shield System",
             excerpt: "For the first time, Starship completed a full entry, descent, and catch sequence with no heat shield tile replacements required for a second flight. The milestone brings fully reusable super-heavy rockets significantly closer to reality.",
             body: """
@@ -98,7 +108,7 @@ NASA watched the test closely. Starship's Human Landing System variant is centra
 
         // MARK: - Business (3)
         Article(
-            id: UUID(),
+            id: stableID(5),
             title: "Federal Reserve Signals Three Rate Cuts Possible This Year",
             excerpt: "Fed Chair Jerome Powell hinted at a faster-than-expected easing cycle, pointing to cooling inflation and a softer labor market. Markets rallied sharply on the news, with the S&P 500 gaining 1.8% by close.",
             body: """
@@ -120,7 +130,7 @@ Economists at major banks revised their rate forecasts upward following the anno
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(6),
             title: "Amazon Acquires AI Infrastructure Startup Meridian for $2.4 Billion",
             excerpt: "The deal gives Amazon Web Services ownership of Meridian's proprietary silicon design tools and a team of 400 chip architects. Analysts say the acquisition accelerates AWS's bid to reduce its dependence on Nvidia GPUs.",
             body: """
@@ -142,7 +152,7 @@ Meridian's co-founder and CEO, Dr. Priya Anand, will serve as VP of Custom Silic
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(7),
             title: "Tesla Stock Surges 22% After Record-Breaking Quarter in Southeast Asia",
             excerpt: "Deliveries in Southeast Asia rose 180% year-over-year, driven by a newly opened Gigafactory in Indonesia. The results silenced near-term bears and pushed Tesla's market capitalization back above $900 billion.",
             body: """
@@ -165,7 +175,7 @@ Analysts at Morgan Stanley raised their twelve-month price target from $210 to $
 
         // MARK: - Politics (3)
         Article(
-            id: UUID(),
+            id: stableID(8),
             title: "Senate Passes Landmark Climate and Clean Energy Act in Narrow Vote",
             excerpt: "The legislation, which passed 52-48, allocates $380 billion for clean energy infrastructure and imposes a national clean electricity standard. It now heads to the House, where passage is uncertain.",
             body: """
@@ -187,7 +197,7 @@ The White House praised the Senate's action and said the President would sign th
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(9),
             title: "NATO Allies Commit $40 Billion in New Defense Spending at Brussels Summit",
             excerpt: "All 32 member nations pledged to sustain defense spending above 2% of GDP, with twelve countries committing to reach 3% by 2027. The summit also approved a new rapid-response force of 100,000 troops.",
             body: """
@@ -209,7 +219,7 @@ In a notable development, the alliance endorsed a new doctrine explicitly addres
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(10),
             title: "Supreme Court to Hear Landmark AI Copyright Case in October Term",
             excerpt: "The case, which pits a coalition of authors against a major AI company, will determine whether training large language models on copyrighted text constitutes fair use. A ruling is expected by June next year.",
             body: """
@@ -232,7 +242,7 @@ The Court typically hears cases argued in October through April and issues decis
 
         // MARK: - Sports (3)
         Article(
-            id: UUID(),
+            id: stableID(11),
             title: "Golden State Warriors Land Three-Time MVP in Blockbuster Trade",
             excerpt: "The Warriors sent four first-round picks and two All-Stars to acquire the league's reigning MVP, instantly transforming them into championship contenders. Bay Area fans erupted after the announcement late Thursday night.",
             body: """
@@ -254,7 +264,7 @@ The transaction is contingent on Okafor passing a physical, which is scheduled f
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(12),
             title: "England Reaches World Cup Final With Dramatic Penalty Shootout Win",
             excerpt: "England beat France 4-3 on penalties after a pulsating 1-1 draw, with goalkeeper Jordan Pickford saving two spot kicks to send the nation into euphoria. They will face Argentina in Sunday's final.",
             body: """
@@ -276,7 +286,7 @@ England will face Argentina in Sunday's final, a rematch of the 1986 classic. Th
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(13),
             title: "Serena Williams Returns to Wimbledon for Landmark Charity Exhibition",
             excerpt: "Four years after her retirement, Williams played an exhibition match at Centre Court to raise funds for underprivileged youth tennis programs. The 41,000-strong crowd gave her two standing ovations.",
             body: """
@@ -299,7 +309,7 @@ The Williams Sisters Foundation was established in 2019 and has since funded ove
 
         // MARK: - Science (4)
         Article(
-            id: UUID(),
+            id: stableID(14),
             title: "Scientists Confirm Gravitational Wave Signature of Binary Neutron Star Merger",
             excerpt: "A joint detection by LIGO, Virgo, and KAGRA has pinpointed a neutron star collision 130 million light-years away with unprecedented precision. The event also produced a gamma-ray burst visible to space telescopes within seconds.",
             body: """
@@ -321,7 +331,7 @@ The full dataset will be publicly released in 72 hours through the Gravitational
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(15),
             title: "mRNA Cancer Vaccine Shows 91% Efficacy in Phase III Trial",
             excerpt: "Moderna and Merck's personalized melanoma vaccine prevented recurrence in 91% of high-risk patients over a three-year follow-up. The results could pave the way for FDA approval by the end of this year.",
             body: """
@@ -343,7 +353,7 @@ The companies plan to submit a Biologics License Application to the FDA in the t
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(16),
             title: "NASA's Europa Clipper Detects Organic Molecules in Plume Sample",
             excerpt: "During a close flyby of Jupiter's moon Europa, the spacecraft's mass spectrometer captured complex organic compounds in an ejected plume. Scientists say the finding significantly raises the probability of a habitable subsurface ocean.",
             body: """
@@ -365,7 +375,7 @@ NASA and ESA are jointly studying proposals for a Europa lander mission that cou
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(17),
             title: "Harvard Team Grows Functional Kidney Tissue From Human Stem Cells",
             excerpt: "Researchers have produced kidney organoids that can filter waste and concentrate urine at near-physiological levels, a first for the field. The advance could eventually reduce dependence on transplant waiting lists.",
             body: """
@@ -388,7 +398,7 @@ The path to clinical transplantation remains long. The organoids currently measu
 
         // MARK: - Entertainment (3)
         Article(
-            id: UUID(),
+            id: stableID(18),
             title: "Dune: Messiah Shatters Opening Weekend Box Office Records",
             excerpt: "Denis Villeneuve's third Dune film earned $312 million globally in its first three days, the largest opening ever for a science fiction film. Critics have called it the best of the trilogy.",
             body: """
@@ -410,7 +420,7 @@ Warner Bros. confirmed immediately after the weekend results that a fourth filmâ
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(19),
             title: "Taylor Swift Announces 'The Manuscript' World Tour for 2027",
             excerpt: "Swift's next tour will span 110 dates across six continents, supporting her eleventh studio album. Pre-sale tickets sold out in under four minutes in every market, crashing multiple ticketing platforms.",
             body: """
@@ -432,7 +442,7 @@ Swift's team announced that 5% of all ticket revenue will be donated to literacy
         ),
 
         Article(
-            id: UUID(),
+            id: stableID(20),
             title: "Netflix Documentary 'Apollo: The Hidden History' Wins Three Emmy Awards",
             excerpt: "The five-part series, which used declassified documents and AI-restored footage to tell the untold stories of the Apollo program's support workers, took home Outstanding Documentary, Directing, and Editing.",
             body: """

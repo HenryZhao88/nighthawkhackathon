@@ -47,9 +47,11 @@ fly secrets list               # names only, never values
 - `articles.db` (and WAL/SHM) live on `/data` inside the container, which is the
   mounted Fly volume. Do not store them anywhere else or they'll be wiped on
   deploy.
-- Only `GET` is allowed through CORS. There are no write endpoints — the API is
-  read-only to the world.
-- Rate limits: 60 req/min/IP on `/articles`, 30 req/min/IP on `/health`.
+- CORS allows public `GET` reads plus `POST /interactions` so the iOS app can
+  send batched personalization signals.
+- Rate limits: 60 req/min/IP on `/articles` and `/feed`, 120 req/min/IP on
+  `/interactions`, 30 req/min/IP on `/health`.
 - `min_machines_running = 0` means Fly will stop the machine when idle; the
-  first request after idle takes a couple of seconds to wake it. If you want
-  always-on, bump to `1`.
+  first request after idle takes a couple of seconds to wake it. The API now
+  schedules a refresh when stale content is requested after wake. If you want
+  always-on scheduled refreshes, bump this to `1`.
