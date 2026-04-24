@@ -10,6 +10,7 @@ struct MainTabView: View {
                 pages: [
                     AnyView(NavigationStack { HomeView() }.environmentObject(store)),
                     AnyView(FeedView().environmentObject(store)),
+                    AnyView(SearchView().environmentObject(store)),
                     AnyView(NavigationStack { SettingsView() }.environmentObject(store)),
                 ],
                 currentIndex: $selectedTab

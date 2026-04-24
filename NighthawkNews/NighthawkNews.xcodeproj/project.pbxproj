@@ -12,6 +12,7 @@
 		0F1C63690E5886AD466AF1A2 /* LikedArticlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5385A64CD7C1928C183F2C /* LikedArticlesView.swift */; };
 		0FC86366D4CC88CB9C3313B7 /* Date+TimeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF94542519B5FBCE2563FF7B /* Date+TimeAgo.swift */; };
 		230F8A71B73BA56B133EAB70 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C902C44DCF0D632277555C67 /* PageViewController.swift */; };
+		251BBC431E0C0899D579DDA6 /* RecommendationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FF567E8CF6BE07A26E00D2 /* RecommendationService.swift */; };
 		2832E9B20CCF2B53288EBB0C /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF0783074E2338841F8C758 /* SignInView.swift */; };
 		3034E9CB4F7497D06389D532 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A99C1D315110BC337799D06 /* Assets.xcassets */; };
 		3381EB4BF0A7BAAEE5B4A592 /* DwellTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B3A056D0D424C7225BEB1C /* DwellTracker.swift */; };
@@ -30,9 +31,11 @@
 		A8AB2739E24E228B7D367A25 /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF25ED7B805869EBA42C2A29 /* Article.swift */; };
 		AD7B9BB56DEBD3BDDD9963F5 /* BookmarkedArticlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02438CEC857E07C54A6425D7 /* BookmarkedArticlesView.swift */; };
 		B0E0B9B47E48775E06425823 /* ArticleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA3F8B7F6084DDA8A00E337 /* ArticleCard.swift */; };
+		B608A11B98E57DB2358B69AA /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFC7A00BC1EC20D75C47329 /* SearchView.swift */; };
 		CA4D6C8E476198E341B278AA /* PoliticalBiasBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97C6AD04D29C6A2DFB47536 /* PoliticalBiasBar.swift */; };
 		CAF6FCBD0DE7822C0703B1AA /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87E9497BE4FDA1CC03489F7 /* FeedView.swift */; };
 		D40304BAE2B076B411869FFE /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0406A39D89EE5FB6F2D10382 /* AuthStore.swift */; };
+		DD8E438E9F4870F17189EF7D /* SearchHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEEF7FD1396C04F9806359F9 /* SearchHistoryStore.swift */; };
 		E331EE17AD6044EE2E68E75C /* RecommendationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B36F646212A0F06280A359 /* RecommendationEngine.swift */; };
 		E51ADEA57551BC96C83DAB6B /* InteractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D64F693736B4BDC0DD3D17 /* InteractionService.swift */; };
 		EA0FB97550BAA92C046B46AD /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = DB0253AD851E182398C68FA2 /* GoogleSignIn */; };
@@ -46,6 +49,7 @@
 		0AD0313E552AD155DABE0A5A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		0CA1A41EEACD4A5F8B988A9E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		2F84829DF21160A640019E93 /* NighthawkNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NighthawkNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		33FF567E8CF6BE07A26E00D2 /* RecommendationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationService.swift; sourceTree = "<group>"; };
 		3D5385A64CD7C1928C183F2C /* LikedArticlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedArticlesView.swift; sourceTree = "<group>"; };
 		45D64F693736B4BDC0DD3D17 /* InteractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionService.swift; sourceTree = "<group>"; };
 		4CF74DA337E2399893E07A2A /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
@@ -53,6 +57,7 @@
 		60DF3B088816A7A34E1A8B23 /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 		710E1B79595B02D8FC9D42E0 /* ViewedArticlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewedArticlesView.swift; sourceTree = "<group>"; };
 		780F6D799F81F218ABC40F5B /* NighthawkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NighthawkApp.swift; sourceTree = "<group>"; };
+		7EFC7A00BC1EC20D75C47329 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		8A99C1D315110BC337799D06 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9FA3F8B7F6084DDA8A00E337 /* ArticleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCard.swift; sourceTree = "<group>"; };
 		A29ED36F4DB058470CC4F7C1 /* NighthawkNews.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NighthawkNews.entitlements; sourceTree = "<group>"; };
@@ -66,6 +71,7 @@
 		CF25ED7B805869EBA42C2A29 /* Article.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Article.swift; sourceTree = "<group>"; };
 		D3B8AAAC8E42683D52ABB2C9 /* AsyncImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncImageView.swift; sourceTree = "<group>"; };
 		D4B36F646212A0F06280A359 /* RecommendationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationEngine.swift; sourceTree = "<group>"; };
+		DEEF7FD1396C04F9806359F9 /* SearchHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHistoryStore.swift; sourceTree = "<group>"; };
 		E87781CC68C5DEAFD677B770 /* FeedCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCardView.swift; sourceTree = "<group>"; };
 		E87E9497BE4FDA1CC03489F7 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
 		E97C6AD04D29C6A2DFB47536 /* PoliticalBiasBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoliticalBiasBar.swift; sourceTree = "<group>"; };
@@ -114,6 +120,7 @@
 				45D64F693736B4BDC0DD3D17 /* InteractionService.swift */,
 				5CC1E056CB8BDF347A06ED32 /* NewsService.swift */,
 				D4B36F646212A0F06280A359 /* RecommendationEngine.swift */,
+				33FF567E8CF6BE07A26E00D2 /* RecommendationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -172,6 +179,7 @@
 				C902C44DCF0D632277555C67 /* PageViewController.swift */,
 				4B44F6CAC8F6715B166495CF /* Feed */,
 				558D578C7895448C179234A8 /* Home */,
+				F0CBECFAD8A68EA854AA0F0A /* Search */,
 				39E45507A5EF1CF4A842894A /* Settings */,
 				E16836A65977BAD432ED51D3 /* Shared */,
 			);
@@ -210,6 +218,15 @@
 				5B5E55110B43A0D9D9DF0EA0 /* NighthawkNews */,
 				A00D89B4576753410B32569A /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		F0CBECFAD8A68EA854AA0F0A /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				DEEF7FD1396C04F9806359F9 /* SearchHistoryStore.swift */,
+				7EFC7A00BC1EC20D75C47329 /* SearchView.swift */,
+			);
+			path = Search;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -312,6 +329,9 @@
 				230F8A71B73BA56B133EAB70 /* PageViewController.swift in Sources */,
 				CA4D6C8E476198E341B278AA /* PoliticalBiasBar.swift in Sources */,
 				E331EE17AD6044EE2E68E75C /* RecommendationEngine.swift in Sources */,
+				251BBC431E0C0899D579DDA6 /* RecommendationService.swift in Sources */,
+				DD8E438E9F4870F17189EF7D /* SearchHistoryStore.swift in Sources */,
+				B608A11B98E57DB2358B69AA /* SearchView.swift in Sources */,
 				4A66D1A2A7A7EF15D64B2287 /* SettingsView.swift in Sources */,
 				2832E9B20CCF2B53288EBB0C /* SignInView.swift in Sources */,
 				886F23938BAFB4ABAA63E1E1 /* ViewedArticlesView.swift in Sources */,

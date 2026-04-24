@@ -15,6 +15,7 @@ struct GlassTabBar: View {
     private let items: [Item] = [
         Item(title: "Home",     icon: "house",        filledIcon: "house.fill"),
         Item(title: "Feed",     icon: "square.stack", filledIcon: "square.stack.fill"),
+        Item(title: "Search",   icon: "magnifyingglass", filledIcon: "magnifyingglass"),
         Item(title: "Settings", icon: "gearshape",    filledIcon: "gearshape.fill"),
     ]
 
