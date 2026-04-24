@@ -1,3 +1,3 @@
-# NewsHawk Hackathon
+# NighthawkNews Hackathon
 
-This repository is currently empty and serves as a placeholder for the NewsHawk Hackathon project.
+This repository is currently empty and serves as a placeholder for the NighthawkNews Hackathon project.

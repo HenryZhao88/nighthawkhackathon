@@ -10,8 +10,8 @@ primary_region = 'iad'
   dockerfile = 'Dockerfile'
 
 [env]
-  NEWSHAWK_DB_PATH = '/data/articles.db'
-  NEWSHAWK_RETENTION_DAYS = '14'
+  NIGHTHAWK_DB_PATH = '/data/articles.db'
+  NIGHTHAWK_RETENTION_DAYS = '14'
 
 [[mounts]]
   source = 'newshawk_data'

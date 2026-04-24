@@ -26,7 +26,7 @@ struct SignInView: View {
                             .foregroundStyle(Color.accentColor)
                             .padding(.top, 72)
 
-                        Text("NewsHawk")
+                        Text("NighthawkNews")
                             .font(.system(size: 36, weight: .black))
                             .foregroundStyle(Color.primary)
 

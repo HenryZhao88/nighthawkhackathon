@@ -2,7 +2,7 @@ import SwiftUI
 import GoogleSignIn
 
 @main
-struct NewsHawkApp: App {
+struct NighthawkNewsApp: App {
     @StateObject private var store = ArticleStore()
     @StateObject private var auth = AuthStore()
     @AppStorage("theme") private var theme: String = "System"

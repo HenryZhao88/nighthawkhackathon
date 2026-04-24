@@ -12,7 +12,7 @@ struct HomeView: View {
             ArticleListView(articles: store.articles(in: selectedCategory))
         }
         .padding(.top, -10)
-        .navigationTitle("NewsHawk")
+        .navigationTitle("NighthawkNews")
         .navigationBarTitleDisplayMode(.large)
         .background(Color(uiColor: .systemGroupedBackground))
     }

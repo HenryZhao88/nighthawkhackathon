@@ -4,7 +4,7 @@ import Foundation
 final class SearchHistoryStore: ObservableObject {
     @Published private(set) var queries: [String]
 
-    private static let key = "NEWSHAWK_SEARCH_HISTORY"
+    private static let key = "NIGHTHAWK_SEARCH_HISTORY"
     private static let maxEntries = 10
 
     init() {

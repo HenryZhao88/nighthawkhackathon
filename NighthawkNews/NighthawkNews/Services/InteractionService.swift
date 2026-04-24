@@ -47,7 +47,7 @@ final class InteractionService: ObservableObject {
     func flush() async {
         guard !pending.isEmpty else { return }
 
-        let userID = UserDefaults.standard.string(forKey: "NEWSHAWK_USER_ID") ?? "anonymous"
+        let userID = UserDefaults.standard.string(forKey: "NIGHTHAWK_USER_ID") ?? "anonymous"
         let batch = pending
         pending.removeAll()
         saveToDisk()

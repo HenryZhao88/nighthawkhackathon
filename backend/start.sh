@@ -16,7 +16,7 @@ echo "→ Installing dependencies..."
 # so the whole expression always exits 0)
 lsof -ti :8000 2>/dev/null | xargs kill -9 2>/dev/null || true
 
-echo "→ Starting NewsHawk News backend on http://localhost:8000"
+echo "→ Starting NighthawkNews backend on http://localhost:8000"
 echo "   First scrape begins immediately; articles appear within ~15 seconds."
 echo "   Cache refreshes automatically every 30 minutes."
 echo "   Press Ctrl+C to stop."

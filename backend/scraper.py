@@ -58,9 +58,9 @@ RSS_FEEDS: dict[str, list[tuple[str, str]]] = {
 
 MAX_PER_FEED = 6          # articles taken from each feed per scrape
 FETCH_TIMEOUT = 15        # seconds before feedparser gives up on a URL
-FEED_WORKERS = int(os.getenv("NEWSHAWK_FEED_WORKERS", "6"))
-BIAS_CONCURRENCY = int(os.getenv("NEWSHAWK_BIAS_CONCURRENCY", "4"))
-USER_AGENT = "NewsHawkBot/1.0"
+FEED_WORKERS = int(os.getenv("NIGHTHAWK_FEED_WORKERS", "6"))
+BIAS_CONCURRENCY = int(os.getenv("NIGHTHAWK_BIAS_CONCURRENCY", "4"))
+USER_AGENT = "NighthawkNewsBot/1.0"
 
 
 # ---------------------------------------------------------------------------
@@ -276,8 +276,11 @@ async def _rate_bias(article_id: str, title: str, excerpt: str) -> float:
         score = float(raw)
         score = max(-1.0, min(1.0, score))
     except Exception as exc:
+        # Don't persist a fake 0.0 — that would permanently poison the cache
+        # and prevent the article from ever being re-rated. Return 0.0 for
+        # this request only; next scrape cycle will retry.
         print(f"[bias] rating failed for '{title[:40]}': {exc}")
-        score = 0.0
+        return 0.0
 
     _db.set_bias(article_id, score)
     return score

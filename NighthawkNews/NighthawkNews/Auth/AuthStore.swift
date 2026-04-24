@@ -43,7 +43,7 @@ class AuthStore: ObservableObject {
         guard let session = KeychainSession.load() else { return }
         isAuthenticated = true
         currentEmail = session.email
-        UserDefaults.standard.set(session.email, forKey: "NEWSHAWK_USER_ID")
+        UserDefaults.standard.set(session.email, forKey: "NIGHTHAWK_USER_ID")
 
         if session.method == .google {
             Task { @MainActor in
@@ -70,7 +70,7 @@ class AuthStore: ObservableObject {
         }
         isAuthenticated = true
         currentEmail = normalized
-        UserDefaults.standard.set(normalized, forKey: "NEWSHAWK_USER_ID")
+        UserDefaults.standard.set(normalized, forKey: "NIGHTHAWK_USER_ID")
         KeychainSession.save(.init(email: normalized, method: .password))
     }
 
@@ -82,7 +82,7 @@ class AuthStore: ObservableObject {
             let email = result.user.profile?.email ?? result.user.userID ?? "Google User"
             isAuthenticated = true
             currentEmail = email
-            UserDefaults.standard.set(email, forKey: "NEWSHAWK_USER_ID")
+            UserDefaults.standard.set(email, forKey: "NIGHTHAWK_USER_ID")
             KeychainSession.save(.init(email: email, method: .google))
         } catch let error as NSError {
             // Keychain error (-34018) means the app isn't signed with a team yet.
@@ -104,7 +104,7 @@ class AuthStore: ObservableObject {
         GIDSignIn.sharedInstance.signOut()
         isAuthenticated = false
         currentEmail = ""
-        UserDefaults.standard.removeObject(forKey: "NEWSHAWK_USER_ID")
+        UserDefaults.standard.removeObject(forKey: "NIGHTHAWK_USER_ID")
         KeychainSession.delete()
     }
 }
@@ -115,7 +115,7 @@ private struct KeychainSession {
     let email: String
     let method: AuthStore.SignInMethod
 
-    private static let service = "com.newshawk.NewsHawkNews.auth"
+    private static let service = "com.nighthawknews.NighthawkNews.auth"
     private static let account = "session"
     private static let separator: Character = "|"
 

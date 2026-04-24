@@ -1,5 +1,5 @@
 """
-NewsHawk News  —  Backend API
+NighthawkNews  —  Backend API
 
 Public, read-only endpoints backed by a SQLite article store that is
 refreshed from RSS feeds every 30 minutes.
@@ -32,7 +32,7 @@ _refresh_lock = asyncio.Lock()
 _on_demand_refresh: asyncio.Task[None] | None = None
 
 # How many days of articles to retain in the DB.
-RETENTION_DAYS = int(os.getenv("NEWSHAWK_RETENTION_DAYS", "14"))
+RETENTION_DAYS = int(os.getenv("NIGHTHAWK_RETENTION_DAYS", "14"))
 
 
 async def _refresh_once(reason: str) -> None:
@@ -74,7 +74,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="NewsHawk News API",
+    title="NighthawkNews API",
     lifespan=lifespan,
     docs_url=None,          # hide /docs publicly
     redoc_url=None,

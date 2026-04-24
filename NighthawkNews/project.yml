@@ -25,7 +25,7 @@ targets:
     info:
       path: NighthawkNews/Info.plist
       properties:
-        CFBundleDisplayName: NewsHawk
+        CFBundleDisplayName: NighthawkNews
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
@@ -44,3 +44,4 @@ targets:
         DEVELOPMENT_TEAM: ""
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        TARGETED_DEVICE_FAMILY: "1"

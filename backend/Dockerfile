@@ -17,7 +17,7 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # DB lives on the mounted Fly volume
-ENV NEWSHAWK_DB_PATH=/data/articles.db \
+ENV NIGHTHAWK_DB_PATH=/data/articles.db \
     PORT=8080
 
 EXPOSE 8080

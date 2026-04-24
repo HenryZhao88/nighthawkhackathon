@@ -18,9 +18,9 @@ class ArticleStore: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
 
     private enum Keys {
-        static let liked      = "NEWSHAWK_LIKED_IDS"
-        static let bookmarked = "NEWSHAWK_BOOKMARKED_IDS"
-        static let viewed     = "NEWSHAWK_VIEWED_IDS"
+        static let liked      = "NIGHTHAWK_LIKED_IDS"
+        static let bookmarked = "NIGHTHAWK_BOOKMARKED_IDS"
+        static let viewed     = "NIGHTHAWK_VIEWED_IDS"
     }
 
     init() {
@@ -145,7 +145,7 @@ class ArticleStore: ObservableObject {
     /// Build a personalised feed via the backend 5-stage pipeline.
     /// Falls back to the local RecommendationEngine when offline.
     func generateFeed() async -> [Article] {
-        let userID = UserDefaults.standard.string(forKey: "NEWSHAWK_USER_ID") ?? "anonymous"
+        let userID = UserDefaults.standard.string(forKey: "NIGHTHAWK_USER_ID") ?? "anonymous"
         do {
             let feed = try await NewsService.fetchFeed(
                 userID: userID,

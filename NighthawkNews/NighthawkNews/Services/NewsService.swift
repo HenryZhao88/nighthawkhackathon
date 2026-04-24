@@ -5,16 +5,16 @@ enum NewsService {
     // Configuration
     //
     // Default points at the public Fly.io deployment. Override at runtime by
-    // setting the `NEWSHAWK_API_BASE_URL` UserDefaults key (useful for testing
+    // setting the `NIGHTHAWK_API_BASE_URL` UserDefaults key (useful for testing
     // against a local backend without rebuilding):
     //
     //   UserDefaults.standard.set("http://192.168.1.42:8000",
-    //                             forKey: "NEWSHAWK_API_BASE_URL")
+    //                             forKey: "NIGHTHAWK_API_BASE_URL")
     // -----------------------------------------------------------------------
     static let defaultBaseURL = "https://newshawk-api.fly.dev"
 
     static var baseURL: String {
-        UserDefaults.standard.string(forKey: "NEWSHAWK_API_BASE_URL") ?? defaultBaseURL
+        UserDefaults.standard.string(forKey: "NIGHTHAWK_API_BASE_URL") ?? defaultBaseURL
     }
 
     private static func components(for endpoint: String) throws -> URLComponents {

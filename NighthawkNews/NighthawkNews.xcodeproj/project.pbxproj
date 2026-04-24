@@ -48,7 +48,7 @@
 		06B3A056D0D424C7225BEB1C /* DwellTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DwellTracker.swift; sourceTree = "<group>"; };
 		0AD0313E552AD155DABE0A5A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		0CA1A41EEACD4A5F8B988A9E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		2F84829DF21160A640019E93 /* NighthawkNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NighthawkNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F84829DF21160A640019E93 /* NighthawkNews.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NighthawkNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33FF567E8CF6BE07A26E00D2 /* RecommendationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationService.swift; sourceTree = "<group>"; };
 		3D5385A64CD7C1928C183F2C /* LikedArticlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedArticlesView.swift; sourceTree = "<group>"; };
 		45D64F693736B4BDC0DD3D17 /* InteractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionService.swift; sourceTree = "<group>"; };
@@ -262,6 +262,7 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					617D6C74BF8CD31BA2977C92 = {
+						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -349,7 +350,7 @@
 				CODE_SIGN_ENTITLEMENTS = NighthawkNews/NighthawkNews.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 52W3TU3Z39;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = NighthawkNews/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -359,7 +360,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.newshawk.NewsHawkNews;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -490,7 +491,7 @@
 				CODE_SIGN_ENTITLEMENTS = NighthawkNews/NighthawkNews.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 52W3TU3Z39;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = NighthawkNews/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -500,7 +501,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.newshawk.NewsHawkNews;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};

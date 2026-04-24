@@ -1,7 +1,7 @@
 """
 SQLite persistence for scraped articles.
 
-The DB is a single file (path from NEWSHAWK_DB_PATH env var, default
+The DB is a single file (path from NIGHTHAWK_DB_PATH env var, default
 ./articles.db) holding one row per article keyed by stable UUID. Re-scrapes
 UPSERT, so likes/bookmarks on the client stay pinned to the same IDs.
 
@@ -14,7 +14,7 @@ import threading
 from datetime import datetime, timezone
 from typing import Optional
 
-DB_PATH = os.getenv("NEWSHAWK_DB_PATH", os.path.join(os.path.dirname(__file__), "articles.db"))
+DB_PATH = os.getenv("NIGHTHAWK_DB_PATH", os.path.join(os.path.dirname(__file__), "articles.db"))
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS articles (
