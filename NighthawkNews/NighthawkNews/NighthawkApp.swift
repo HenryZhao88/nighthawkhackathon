@@ -32,6 +32,15 @@ struct NighthawkNewsApp: App {
             .onOpenURL { url in
                 GIDSignIn.sharedInstance.handle(url)
             }
+            .task {
+                if auth.isAuthenticated {
+                    await store.syncFromServer()
+                }
+            }
+            .onChange(of: auth.isAuthenticated) { _, isAuth in
+                guard isAuth else { return }
+                Task { await store.syncFromServer() }
+            }
         }
     }
 }

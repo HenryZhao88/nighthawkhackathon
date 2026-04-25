@@ -56,6 +56,20 @@ CREATE TABLE IF NOT EXISTS user_profiles (
     profile    TEXT NOT NULL,
     updated_at TEXT NOT NULL
 );
+
+-- Cross-device state of which articles a user has liked / bookmarked / viewed.
+-- Distinct from user_interactions (append-only signal stream for the
+-- recommender) — this table is the source of truth for "show me my saved
+-- articles on a new device".
+CREATE TABLE IF NOT EXISTS user_article_state (
+    user_id    TEXT NOT NULL,
+    article_id TEXT NOT NULL,
+    kind       TEXT NOT NULL CHECK(kind IN ('liked','bookmarked','viewed')),
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY (user_id, article_id, kind)
+);
+CREATE INDEX IF NOT EXISTS idx_user_state_user_kind
+    ON user_article_state(user_id, kind, updated_at DESC);
 """
 
 
@@ -210,6 +224,55 @@ class ArticleDB:
                 "SELECT profile FROM user_profiles WHERE user_id = ?", (user_id,)
             ).fetchone()
         return row["profile"] if row else None
+
+    # ------------------------------------------------------------------
+    # User article state (liked / bookmarked / viewed — cross-device)
+
+    _STATE_KINDS = ("liked", "bookmarked", "viewed")
+
+    def set_user_state(self, user_id: str, article_id: str, kind: str) -> None:
+        if kind not in self._STATE_KINDS:
+            raise ValueError(f"invalid kind: {kind}")
+        now = datetime.now(timezone.utc).isoformat()
+        with self._lock:
+            self._conn.execute(
+                "INSERT INTO user_article_state (user_id, article_id, kind, updated_at) "
+                "VALUES (?, ?, ?, ?) "
+                "ON CONFLICT(user_id, article_id, kind) DO UPDATE SET "
+                "updated_at=excluded.updated_at",
+                (user_id, article_id, kind, now),
+            )
+
+    def unset_user_state(self, user_id: str, article_id: str, kind: str) -> None:
+        if kind not in self._STATE_KINDS:
+            raise ValueError(f"invalid kind: {kind}")
+        with self._lock:
+            self._conn.execute(
+                "DELETE FROM user_article_state "
+                "WHERE user_id = ? AND article_id = ? AND kind = ?",
+                (user_id, article_id, kind),
+            )
+
+    def get_user_state(self, user_id: str, viewed_limit: int = 1000) -> dict:
+        """Returns the user's current liked / bookmarked / viewed article ID lists,
+        each ordered most-recent first. `viewed` is capped at `viewed_limit`
+        because viewing volume is unbounded."""
+        with self._lock:
+            def _ids(kind: str, limit: Optional[int] = None) -> list[str]:
+                sql = ("SELECT article_id FROM user_article_state "
+                       "WHERE user_id = ? AND kind = ? "
+                       "ORDER BY updated_at DESC")
+                params: tuple = (user_id, kind)
+                if limit is not None:
+                    sql += " LIMIT ?"
+                    params = params + (limit,)
+                return [r["article_id"] for r in self._conn.execute(sql, params).fetchall()]
+
+            return {
+                "liked":      _ids("liked"),
+                "bookmarked": _ids("bookmarked"),
+                "viewed":     _ids("viewed", viewed_limit),
+            }
 
 
 def _row_to_dict(r: sqlite3.Row) -> dict:

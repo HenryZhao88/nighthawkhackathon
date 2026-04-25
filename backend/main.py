@@ -14,7 +14,7 @@ import asyncio
 import os
 import uvicorn
 from contextlib import asynccontextmanager
-from fastapi import BackgroundTasks, FastAPI, Query, Request
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -106,6 +106,11 @@ class InteractionBatch(BaseModel):
     user_id: str
     interactions: list[Interaction]
 
+class StateMutation(BaseModel):
+    article_id: str
+    kind: str           # "liked" | "bookmarked" | "viewed"
+    value: bool         # true = set, false = unset
+
 
 # ---------------------------------------------------------------------------
 # Endpoints
@@ -147,6 +152,28 @@ async def get_feed(
 async def get_articles(request: Request, category: Optional[str] = Query(default=None)):
     _schedule_refresh_if_stale()
     return cache.get(category=category)
+
+
+@app.get("/users/{user_id}/state")
+@limiter.limit("60/minute")
+async def get_user_state(request: Request, user_id: str):
+    """Return the user's current liked / bookmarked / viewed article ID lists.
+    Used by the iOS client on sign-in to seed local state from the server so
+    bookmarks etc. are visible across devices."""
+    return cache.db.get_user_state(user_id)
+
+
+@app.post("/users/{user_id}/state")
+@limiter.limit("180/minute")
+async def post_user_state(request: Request, user_id: str, body: StateMutation):
+    """Set or unset a single (user, article, kind) tuple. Idempotent."""
+    if body.kind not in ("liked", "bookmarked", "viewed"):
+        raise HTTPException(status_code=400, detail="invalid kind")
+    if body.value:
+        cache.db.set_user_state(user_id, body.article_id, body.kind)
+    else:
+        cache.db.unset_user_state(user_id, body.article_id, body.kind)
+    return {"ok": True}
 
 
 @app.get("/health")

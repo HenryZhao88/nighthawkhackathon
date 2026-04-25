@@ -38,6 +38,7 @@
 		DD8E438E9F4870F17189EF7D /* SearchHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEEF7FD1396C04F9806359F9 /* SearchHistoryStore.swift */; };
 		E331EE17AD6044EE2E68E75C /* RecommendationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B36F646212A0F06280A359 /* RecommendationEngine.swift */; };
 		E51ADEA57551BC96C83DAB6B /* InteractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D64F693736B4BDC0DD3D17 /* InteractionService.swift */; };
+		E54617A6049F8F8C3E6E4BD4 /* UserStateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B184CC789870C0AF20A443 /* UserStateService.swift */; };
 		EA0FB97550BAA92C046B46AD /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = DB0253AD851E182398C68FA2 /* GoogleSignIn */; };
 		F6D100ED0FFE934E0904B612 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD0313E552AD155DABE0A5A /* MainTabView.swift */; };
 /* End PBXBuildFile section */
@@ -48,6 +49,7 @@
 		06B3A056D0D424C7225BEB1C /* DwellTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DwellTracker.swift; sourceTree = "<group>"; };
 		0AD0313E552AD155DABE0A5A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		0CA1A41EEACD4A5F8B988A9E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		28B184CC789870C0AF20A443 /* UserStateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStateService.swift; sourceTree = "<group>"; };
 		2F84829DF21160A640019E93 /* NighthawkNews.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NighthawkNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33FF567E8CF6BE07A26E00D2 /* RecommendationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationService.swift; sourceTree = "<group>"; };
 		3D5385A64CD7C1928C183F2C /* LikedArticlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedArticlesView.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				5CC1E056CB8BDF347A06ED32 /* NewsService.swift */,
 				D4B36F646212A0F06280A359 /* RecommendationEngine.swift */,
 				33FF567E8CF6BE07A26E00D2 /* RecommendationService.swift */,
+				28B184CC789870C0AF20A443 /* UserStateService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				B608A11B98E57DB2358B69AA /* SearchView.swift in Sources */,
 				4A66D1A2A7A7EF15D64B2287 /* SettingsView.swift in Sources */,
 				2832E9B20CCF2B53288EBB0C /* SignInView.swift in Sources */,
+				E54617A6049F8F8C3E6E4BD4 /* UserStateService.swift in Sources */,
 				886F23938BAFB4ABAA63E1E1 /* ViewedArticlesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

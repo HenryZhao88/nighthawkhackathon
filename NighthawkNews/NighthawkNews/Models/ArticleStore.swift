@@ -111,6 +111,7 @@ class ArticleStore: ObservableObject {
         if !wasLiked {
             InteractionService.shared.queue(articleID: id, interaction: "like")
         }
+        pushState(articleID: id, kind: .liked, value: !wasLiked)
     }
 
     func bookmarkArticle(id: UUID) {
@@ -119,11 +120,13 @@ class ArticleStore: ObservableObject {
         if !wasBookmarked {
             InteractionService.shared.queue(articleID: id, interaction: "bookmark")
         }
+        pushState(articleID: id, kind: .bookmarked, value: !wasBookmarked)
     }
 
     func markViewed(id: UUID) {
         guard !viewedIDs.contains(id) else { return }
         viewedIDs.insert(id)
+        pushState(articleID: id, kind: .viewed, value: true)
     }
 
     /// Record that this article appeared in the feed during this session.
@@ -160,6 +163,45 @@ class ArticleStore: ObservableObject {
             from: articles,
             using: .init(likedIDs: likedIDs, viewedIDs: viewedIDs, articles: articles)
         )
+    }
+
+    // MARK: - Server-side state sync
+
+    /// Replace local liked/bookmarked/viewed sets with the server's source of
+    /// truth. Called on sign-in / app launch so a user's saved articles appear
+    /// across devices. Local sets remain populated on failure (offline-friendly).
+    func syncFromServer() async {
+        let userID = UserDefaults.standard.string(forKey: "NIGHTHAWK_USER_ID") ?? ""
+        let trimmed = userID.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, trimmed != "anonymous" else { return }
+
+        do {
+            let state = try await UserStateService.fetch(userID: trimmed)
+            likedIDs      = Set(state.liked.compactMap(UUID.init(uuidString:)))
+            bookmarkedIDs = Set(state.bookmarked.compactMap(UUID.init(uuidString:)))
+            viewedIDs     = Set(state.viewed.compactMap(UUID.init(uuidString:)))
+        } catch {
+            print("[ArticleStore] state sync failed: \(error)")
+        }
+    }
+
+    /// Fire-and-forget push of a single state change to the server. UI has
+    /// already updated locally; failure here just means the next `syncFromServer`
+    /// will reconcile (server state will lag until then).
+    private func pushState(articleID: UUID, kind: UserStateService.Kind, value: Bool) {
+        let userID = UserDefaults.standard.string(forKey: "NIGHTHAWK_USER_ID") ?? ""
+        let trimmed = userID.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, trimmed != "anonymous" else { return }
+
+        Task.detached {
+            do {
+                try await UserStateService.set(
+                    userID: trimmed, articleID: articleID, kind: kind, value: value
+                )
+            } catch {
+                print("[ArticleStore] state push failed (\(kind), value=\(value)): \(error)")
+            }
+        }
     }
 
     /// Synchronous local-only feed for immediate display while backend loads.
