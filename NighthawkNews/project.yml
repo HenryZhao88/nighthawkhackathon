@@ -20,6 +20,8 @@ targets:
     entitlements:
       path: NighthawkNews/NighthawkNews.entitlements
       properties:
+        com.apple.developer.applesignin:
+          - Default
         keychain-access-groups:
           - $(AppIdentifierPrefix)com.newshawk.NewsHawkNews
     info:

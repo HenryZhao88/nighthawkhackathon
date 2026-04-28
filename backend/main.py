@@ -83,11 +83,11 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Public API: GET for reads, POST for interaction ingestion.
+# Public API: GET for reads, POST for interaction ingestion, DELETE for account removal.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["*"],
 )
 
@@ -174,6 +174,19 @@ async def post_user_state(request: Request, user_id: str, body: StateMutation):
     else:
         cache.db.unset_user_state(user_id, body.article_id, body.kind)
     return {"ok": True}
+
+
+@app.delete("/users/{user_id}")
+@limiter.limit("10/minute")
+async def delete_user(request: Request, user_id: str):
+    """Permanently delete all data for a user (interactions, saved state, profile).
+    Required by App Store guideline 5.1.1(v) — account deletion must be
+    user-initiated and complete in-app."""
+    trimmed = user_id.strip()
+    if not trimmed:
+        raise HTTPException(status_code=400, detail="user_id required")
+    counts = cache.db.delete_user(trimmed)
+    return {"ok": True, **counts}
 
 
 @app.get("/health")

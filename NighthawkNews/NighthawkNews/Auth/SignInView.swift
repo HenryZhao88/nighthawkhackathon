@@ -1,8 +1,10 @@
 import SwiftUI
+import AuthenticationServices
 import GoogleSignIn
 
 struct SignInView: View {
     @EnvironmentObject var auth: AuthStore
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var email: String = ""
     @State private var password: String = ""
@@ -10,6 +12,7 @@ struct SignInView: View {
     @State private var errorMessage: String = ""
     @State private var isLoading: Bool = false
     @State private var isGoogleLoading: Bool = false
+    @State private var isAppleLoading: Bool = false
     @State private var shake: Bool = false
 
     var body: some View {
@@ -151,6 +154,32 @@ struct SignInView: View {
                         }
                         .padding(.vertical, 4)
 
+                        // Sign in with Apple (placed first to satisfy Apple's
+                        // "at least as prominent" requirement when alternative
+                        // login services are offered).
+                        Button {
+                            Task { await attemptAppleSignIn() }
+                        } label: {
+                            ZStack {
+                                if isAppleLoading {
+                                    ProgressView().tint(colorScheme == .dark ? .black : .white)
+                                } else {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "applelogo")
+                                            .font(.system(size: 18, weight: .medium))
+                                        Text("Sign in with Apple")
+                                            .font(.headline)
+                                    }
+                                    .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .background(colorScheme == .dark ? Color.white : Color.black)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+                        .disabled(isLoading || isGoogleLoading || isAppleLoading)
+
                         // Google Sign In
                         Button {
                             Task { await attemptGoogleSignIn() }
@@ -183,7 +212,7 @@ struct SignInView: View {
                                     .stroke(Color.secondary.opacity(0.25), lineWidth: 1)
                             )
                         }
-                        .disabled(isLoading || isGoogleLoading)
+                        .disabled(isLoading || isGoogleLoading || isAppleLoading)
                     }
                     .padding(24)
                     .background(Color(uiColor: .systemBackground))
@@ -212,6 +241,20 @@ struct SignInView: View {
             }
             isLoading = false
         }
+    }
+
+    // MARK: - Apple sign-in
+    @MainActor
+    private func attemptAppleSignIn() async {
+        errorMessage = ""
+        isAppleLoading = true
+        do {
+            try await auth.signInWithApple()
+        } catch {
+            errorMessage = error.localizedDescription
+            triggerShake()
+        }
+        isAppleLoading = false
     }
 
     // MARK: - Google sign-in

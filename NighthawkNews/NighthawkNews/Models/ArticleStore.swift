@@ -204,6 +204,29 @@ class ArticleStore: ObservableObject {
         }
     }
 
+    // MARK: - Account deletion
+
+    /// Permanently delete all server-side data for the current user, then
+    /// clear local liked / bookmarked / viewed state. The auth session itself
+    /// is torn down by the caller via `AuthStore.deleteLocalAccount()`.
+    /// Throws on network failure so the UI can surface an error and let the
+    /// user retry — we do NOT want to wipe local state if the server still
+    /// holds the user's data.
+    func deleteAccount() async throws {
+        let userID = UserDefaults.standard.string(forKey: "NIGHTHAWK_USER_ID") ?? ""
+        let trimmed = userID.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmed.isEmpty, trimmed != "anonymous" {
+            try await UserStateService.deleteAccount(userID: trimmed)
+        }
+        likedIDs = []
+        bookmarkedIDs = []
+        viewedIDs = []
+        sessionSeenIDs = []
+        UserDefaults.standard.removeObject(forKey: "NIGHTHAWK_LIKED_IDS")
+        UserDefaults.standard.removeObject(forKey: "NIGHTHAWK_BOOKMARKED_IDS")
+        UserDefaults.standard.removeObject(forKey: "NIGHTHAWK_VIEWED_IDS")
+    }
+
     /// Synchronous local-only feed for immediate display while backend loads.
     func generateLocalFeed() -> [Article] {
         RecommendationEngine.feed(

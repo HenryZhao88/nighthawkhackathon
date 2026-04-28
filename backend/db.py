@@ -253,6 +253,29 @@ class ArticleDB:
                 (user_id, article_id, kind),
             )
 
+    def delete_user(self, user_id: str) -> dict:
+        """Permanently remove all data for a single user. Returns row counts.
+
+        Apps that support account creation must offer account deletion
+        (App Store guideline 5.1.1(v)). Articles are global, so we wipe
+        only the per-user tables.
+        """
+        with self._lock:
+            cur1 = self._conn.execute(
+                "DELETE FROM user_interactions WHERE user_id = ?", (user_id,)
+            )
+            cur2 = self._conn.execute(
+                "DELETE FROM user_article_state WHERE user_id = ?", (user_id,)
+            )
+            cur3 = self._conn.execute(
+                "DELETE FROM user_profiles WHERE user_id = ?", (user_id,)
+            )
+            return {
+                "interactions_deleted": cur1.rowcount,
+                "states_deleted":       cur2.rowcount,
+                "profiles_deleted":     cur3.rowcount,
+            }
+
     def get_user_state(self, user_id: str, viewed_limit: int = 1000) -> dict:
         """Returns the user's current liked / bookmarked / viewed article ID lists,
         each ordered most-recent first. `viewed` is capped at `viewed_limit`
