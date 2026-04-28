@@ -2,12 +2,17 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("theme") private var theme: String = "System"
+    @AppStorage("NIGHTHAWK_DEMO_MODE") private var demoMode: Bool = false
     @EnvironmentObject var auth: AuthStore
     @EnvironmentObject var store: ArticleStore
     @State private var confirmSignOut = false
     @State private var confirmDelete = false
     @State private var deleteError: String? = nil
     @State private var isDeleting = false
+
+    private var isAdmin: Bool {
+        auth.currentEmail.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "admin"
+    }
 
     var body: some View {
         Form {
@@ -31,6 +36,24 @@ struct SettingsView: View {
                 }
                 NavigationLink("Previously Viewed") {
                     ViewedArticlesView()
+                }
+            }
+
+            // MARK: Developer (admin only) — drives demo dataset for App
+            // Store screenshots and review-team recordings.
+            if isAdmin {
+                Section {
+                    Toggle("Demo Mode", isOn: Binding(
+                        get: { demoMode },
+                        set: { newValue in
+                            demoMode = newValue
+                            store.setDemoMode(newValue)
+                        }
+                    ))
+                } header: {
+                    Text("Developer")
+                } footer: {
+                    Text("Replaces the live feed with a curated, fully-fictional dataset and disables network refresh. Used for App Store screenshots so listing imagery never includes real third-party headlines.")
                 }
             }
 

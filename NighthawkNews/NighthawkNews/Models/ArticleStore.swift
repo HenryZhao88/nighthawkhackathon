@@ -21,6 +21,28 @@ class ArticleStore: ObservableObject {
         static let liked      = "NIGHTHAWK_LIKED_IDS"
         static let bookmarked = "NIGHTHAWK_BOOKMARKED_IDS"
         static let viewed     = "NIGHTHAWK_VIEWED_IDS"
+        static let demoMode   = "NIGHTHAWK_DEMO_MODE"
+    }
+
+    /// When true, the app serves a curated, fully-fictional dataset and
+    /// suppresses all network refresh. Used to capture App Store screenshots
+    /// without leaking real third-party headlines into the listing
+    /// (App Store guideline 4.1(a)). Admin-only toggle in Settings.
+    var isDemoMode: Bool {
+        UserDefaults.standard.bool(forKey: Keys.demoMode)
+    }
+
+    func setDemoMode(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: Keys.demoMode)
+        if enabled {
+            refreshTask?.cancel()
+            articles = MockData.demoArticles
+            isShowingStaleData = false
+            fetchError = nil
+            isLoading = false
+        } else {
+            startRefreshLoop()
+        }
     }
 
     init() {
@@ -29,6 +51,15 @@ class ArticleStore: ObservableObject {
         self.likedIDs      = Self.loadIDSet(forKey: Keys.liked)
         self.bookmarkedIDs = Self.loadIDSet(forKey: Keys.bookmarked)
         self.viewedIDs     = Self.loadIDSet(forKey: Keys.viewed)
+
+        // Demo mode short-circuits everything: serve only the curated dataset
+        // and skip network refresh entirely.
+        if UserDefaults.standard.bool(forKey: Keys.demoMode) {
+            self.articles = MockData.demoArticles
+            self.isShowingStaleData = false
+            observeInteractionChanges()
+            return
+        }
 
         // Boot order: on-disk article cache → bundled mock data if the app
         // has never successfully fetched before.
@@ -86,6 +117,12 @@ class ArticleStore: ObservableObject {
     }
 
     func refresh() async {
+        if isDemoMode {
+            articles = MockData.demoArticles
+            isShowingStaleData = false
+            isLoading = false
+            return
+        }
         isLoading = true
         fetchError = nil
         do {
@@ -148,6 +185,9 @@ class ArticleStore: ObservableObject {
     /// Build a personalised feed via the backend 5-stage pipeline.
     /// Falls back to the local RecommendationEngine when offline.
     func generateFeed() async -> [Article] {
+        if isDemoMode {
+            return MockData.demoArticles
+        }
         let userID = UserDefaults.standard.string(forKey: "NIGHTHAWK_USER_ID") ?? "anonymous"
         do {
             let feed = try await NewsService.fetchFeed(
@@ -171,6 +211,7 @@ class ArticleStore: ObservableObject {
     /// truth. Called on sign-in / app launch so a user's saved articles appear
     /// across devices. Local sets remain populated on failure (offline-friendly).
     func syncFromServer() async {
+        if isDemoMode { return }
         let userID = UserDefaults.standard.string(forKey: "NIGHTHAWK_USER_ID") ?? ""
         let trimmed = userID.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, trimmed != "anonymous" else { return }

@@ -15,6 +15,326 @@ enum MockData {
         ))
     }
 
+    private static func demoID(_ sequence: UInt8) -> UUID {
+        UUID(uuid: (
+            0x64, 0x65, 0x6d, 0x6f,
+            0x6e, 0x68,
+            0x77, 0x6b,
+            0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, sequence
+        ))
+    }
+
+    /// Curated dataset for App Store screenshots and demo recordings.
+    ///
+    /// Every article uses fictional people, fictional companies, and invented
+    /// research bodies. There are deliberately no references to real
+    /// celebrities, athletes, sports teams, leagues, studios, or branded
+    /// products — App Store guideline 4.1(a) prohibits leveraging third-party
+    /// names/likenesses in marketing materials without authorization, and
+    /// screenshots taken from this dataset are guaranteed safe.
+    static let demoArticles: [Article] = [
+        Article(
+            id: demoID(1),
+            title: "Coastal Cities Pilot Floating Solar Arrays to Power Desalination Plants",
+            excerpt: "A consortium of four municipalities is testing modular floating solar to offset the energy cost of fresh-water production. Early data show a 31% drop in grid draw at the largest pilot site.",
+            body: """
+Four coastal municipalities have begun a joint two-year trial of modular floating solar arrays anchored just offshore from their desalination facilities. The pilot, organized by a regional water authority, aims to determine whether the daytime energy demands of reverse-osmosis filtration can be met directly by co-located renewable generation rather than drawn from the broader grid.
+
+Engineers at the largest of the four sites reported a 31% reduction in grid draw during peak production hours, with intermittent periods of net export back to the local utility. The arrays are designed to withstand twelve-meter swells and use a flexible mooring system that allows them to ride storm surges without structural damage.
+
+Independent reviewers from the regional energy lab noted that floating solar siting offers two co-benefits beyond generation: the arrays reduce evaporation in the intake basins and lower seawater surface temperatures slightly, both of which marginally improve the efficiency of the downstream filtration units.
+
+The next phase of the trial will introduce small-scale battery storage to cover the early-morning hour before solar production ramps up. If results hold across the planned summer testing window, the consortium intends to publish a deployment template that other coastal municipalities can adapt for their own facilities.
+""",
+            imageURL: "https://picsum.photos/seed/demo1/600/400",
+            source: "Local Energy Review",
+            category: "Science",
+            publishedAt: ago(hours: 2),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(2),
+            title: "Rural Library Network Reports Record Year for Adult Literacy Programs",
+            excerpt: "Volunteer-led tutoring sessions reached more than 14,000 adult learners across the county network last year. Coordinators credit a new evening schedule that better fits working families.",
+            body: """
+The county library network released its annual learning programs report this week, showing that volunteer-led adult literacy tutoring served 14,200 learners over the past year — a 38% increase compared to the prior period. Coordinators attribute the growth largely to a schedule shift that moved most sessions to weekday evenings and Saturday mornings, hours that better match the availability of working adults.
+
+The program pairs trained volunteer tutors with adult learners on a one-to-one basis, working through reading, writing, and basic numeracy at the learner's pace. About 60% of participants are working toward a high-school equivalency credential; the remainder are pursuing improved reading for everyday tasks such as helping children with homework or navigating workplace documents.
+
+The network's director said retention has been the most significant change. Learners who attend their first three sessions are now 72% likely to remain in the program for at least six months, up from 51% two years ago. She credited a redesigned onboarding flow that emphasizes early goal-setting with each learner.
+
+Funding for the program comes from a mix of state library grants, private donations, and a small-business sponsorship pilot in which local employers cover materials costs in exchange for a community recognition listing in the library's newsletter. The network is now exploring expanding the model to a neighboring county that has expressed interest.
+""",
+            imageURL: "https://picsum.photos/seed/demo2/600/400",
+            source: "County Civic Reporter",
+            category: "Politics",
+            publishedAt: ago(hours: 4),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(3),
+            title: "Independent Researchers Develop Open-Source Tool for Water-Quality Monitoring",
+            excerpt: "A volunteer engineering collective has released a low-cost sensor kit that streams real-time pH, turbidity, and dissolved-oxygen readings to a public dashboard.",
+            body: """
+A volunteer engineering collective announced this week the public release of an open-source water-quality monitoring kit that pairs a low-cost microcontroller with a trio of off-the-shelf sensors to produce real-time readings of pH, turbidity, and dissolved oxygen. The kit costs under $90 in parts and uploads readings every fifteen minutes to a public dashboard that anyone can browse.
+
+The team's stated goal is to give community groups and small watershed organizations the ability to maintain their own continuous monitoring stations rather than relying solely on infrequent samples taken by larger agencies. Early adopters in three river basins have already deployed more than fifty units, and the dashboard now hosts roughly half a million data points.
+
+Calibration remains the trickiest part of community-led environmental monitoring, the project's lead engineer acknowledged in a release. The kit ships with a calibration protocol and a quarterly check schedule designed to be performed without specialized lab equipment, using reference solutions available from any educational supply company.
+
+The hardware files, firmware, and dashboard code are all available under a permissive license. The team is fundraising via small donations to support a paid documentation effort and to ship subsidized kits to school districts that are integrating the tool into earth-science curricula.
+""",
+            imageURL: "https://picsum.photos/seed/demo3/600/400",
+            source: "Open Hardware Journal",
+            category: "Tech",
+            publishedAt: ago(hours: 6),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(4),
+            title: "Small-Town Bakery Becomes Unexpected Hub for Civic Discussion",
+            excerpt: "A weekly 'coffee and questions' morning hosted by a local bakery has drawn in residents, town staff, and visiting researchers studying community trust.",
+            body: """
+A small-town bakery on the main street of a 4,000-resident community has, almost by accident, become the most reliable place in the county for face-to-face civic conversation. The owners began hosting an open Tuesday-morning "coffee and questions" hour two years ago after several customers asked for a low-pressure place to talk about town affairs.
+
+The format is intentionally unstructured: town staff, including the planning director and the public-works supervisor, rotate through on a volunteer basis to answer questions about ongoing projects. Residents drop in for fifteen minutes or two hours; there is no agenda and no recording.
+
+Researchers studying small-community trust have begun visiting the bakery to interview participants. Their preliminary findings, presented at a regional civic-engagement conference last month, suggest that the bakery's combination of informal setting and the consistent presence of town staff has materially improved residents' self-reported trust in local government over the past two years.
+
+The owners have politely declined to franchise the format. They say the model only works because it is theirs, and because the staff who attend genuinely want to be there. Other communities interested in adapting the idea, they suggest, should look first for the local volunteer who already wants to host.
+""",
+            imageURL: "https://picsum.photos/seed/demo4/600/400",
+            source: "Regional Public Radio",
+            category: "Politics",
+            publishedAt: ago(hours: 8),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(5),
+            title: "New Garden-Based Math Curriculum Shows Strong Gains in Pilot Schools",
+            excerpt: "Third- and fourth-grade students who participated in a garden-integrated math curriculum outperformed peers in measurement and fractions, a year-end evaluation found.",
+            body: """
+A year-end evaluation of a garden-integrated math curriculum running in eleven pilot elementary schools found that participating third- and fourth-grade students outperformed comparison classrooms on measurement, fractions, and proportional reasoning by an average of nine percentile points. The curriculum was developed by a regional teachers' cooperative and combines weekly outdoor lessons in school gardens with conventional classroom instruction.
+
+The curriculum's authors emphasized that they did not set out to produce a test-score intervention. The program's primary goals are engagement, confidence, and the development of a tactile sense of math as something used in the physical world. Improved test results are, in their telling, a downstream consequence of those primary aims.
+
+Teachers participating in the pilot reported that students who had previously struggled with abstract fractions found the topic more approachable when working with measuring jugs in the garden. One teacher noted that several students who would shut down at a worksheet would readily reason about half versus a third of a watering can.
+
+The cooperative is preparing materials for a wider release at the start of the next academic year. Schools without on-site garden space are receiving a modified version of the curriculum that uses a portable container-garden setup that can be wheeled between classrooms.
+""",
+            imageURL: "https://picsum.photos/seed/demo5/600/400",
+            source: "Education Practice Quarterly",
+            category: "Science",
+            publishedAt: ago(hours: 10),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(6),
+            title: "Regional Bus Cooperative Reaches Milestone of One Million Annual Riders",
+            excerpt: "A small-county transit cooperative crossed the one-million-rides mark for the first time, driven by a redesigned route map and consistent on-time performance.",
+            body: """
+A regional transit cooperative serving four small counties announced this week that it had recorded its first one-million-rider year, more than doubling the ridership level of three years ago. The cooperative attributes the growth to a fully redesigned route map introduced two years ago and to a sustained on-time performance rate above 92%.
+
+The redesign reduced the total number of stops by 18% but increased frequency on the remaining stops, a tradeoff that early surveys suggested most riders preferred. The cooperative also introduced timed transfers at three hub stops, allowing riders changing routes to do so reliably without long waits.
+
+Operationally, the cooperative has invested heavily in maintenance and driver retention. Average vehicle downtime is at a multi-year low, and the driver workforce has stabilized after a difficult two-year hiring environment. Driver wages were raised twice during that period, funded in part by a small fare adjustment and a state operating-assistance grant.
+
+The board is now studying whether to extend service hours into late evening on the two highest-demand corridors. A community comment process is open through the end of the month, and a decision is expected at the next board meeting.
+""",
+            imageURL: "https://picsum.photos/seed/demo6/600/400",
+            source: "Transit Practice Notes",
+            category: "Business",
+            publishedAt: ago(hours: 12),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(7),
+            title: "Wildlife Crossing Project Documents First Safe Passage of Mountain Lion Family",
+            excerpt: "Camera traps captured a mother mountain lion and two cubs using the new highway overpass, the first family group recorded since the structure opened.",
+            body: """
+Camera traps maintained by a state wildlife agency captured a mother mountain lion and two cubs traversing a recently completed highway overpass last week, the first family group documented using the structure since it opened. Biologists involved with the project described the footage as a meaningful confirmation that the crossing is functioning as designed.
+
+The overpass, a vegetated land bridge spanning a six-lane highway, was completed two years ago at the conclusion of a decade-long planning effort. It is the largest dedicated wildlife crossing in the state and was sized specifically to be wide and quiet enough that wide-ranging carnivores would tolerate using it. Earlier camera footage had shown adult males and a few unrelated females using the bridge but no family groups.
+
+Biologists caution against drawing conclusions from a single observation but note that the appearance of cubs is precisely the population-recovery signal the project was intended to enable. Genetic isolation has been a long-running concern for the small mountain-lion population on the northern side of the highway, and any successful family movement across the structure incrementally improves connectivity.
+
+Monitoring will continue for at least another decade, with results published annually. Several other states have sent delegations to study the crossing as part of their own infrastructure planning.
+""",
+            imageURL: "https://picsum.photos/seed/demo7/600/400",
+            source: "Wildlife Monitor",
+            category: "Science",
+            publishedAt: ago(hours: 14),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(8),
+            title: "Independent Bookshops Report Steady Growth for Fifth Consecutive Year",
+            excerpt: "A trade association survey of independent booksellers found average revenue growth of 7% over the past year, with strongest gains in stores that host community events.",
+            body: """
+A trade association survey of independent booksellers found that average revenue grew by 7% over the past year across reporting stores, marking a fifth consecutive year of growth. The strongest performers were stores that host frequent community events such as author readings, children's story hours, and book clubs.
+
+Survey respondents emphasized that the growth has come almost entirely from in-person foot traffic rather than online ordering. The association's executive director described the broader trend as a reassertion of physical retail spaces as community gathering points, not just transaction sites.
+
+Margins remain tight, particularly for stores in high-rent areas. Several respondents noted that the principal challenge is not customer demand but rather the cost of staying in beloved storefronts as commercial rents continue to rise. A handful of stores have moved to slightly less central locations and report that loyal customers have followed them.
+
+The association is preparing a small-store toolkit that distills practices from the highest-growth respondents, including event planning templates and a cooperative-buying program for shared inventory risk on niche titles.
+""",
+            imageURL: "https://picsum.photos/seed/demo8/600/400",
+            source: "Independent Trade Review",
+            category: "Business",
+            publishedAt: ago(hours: 16),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(9),
+            title: "Community Choir Premieres Composition Written During Pandemic Lockdown",
+            excerpt: "A 90-voice community choir performed the long-delayed premiere of a multi-movement work composed by one of its members during the early months of the pandemic.",
+            body: """
+A 90-voice community choir performed the long-delayed premiere of a four-movement work composed by one of its members during the early months of the pandemic. The piece, scored for choir and small chamber ensemble, had been assembled remotely over several months in 2020 and had been waiting for an in-person premiere ever since.
+
+The composer, an amateur musician and full-time elementary-school teacher, said the piece grew out of recordings she made during evening walks in her neighborhood when nothing else was open. She layered field recordings of birdsong and distant traffic with sketches of harmonies she heard in her head, eventually shaping the material into a cohesive work.
+
+The premiere drew a sell-out crowd to a community church that has hosted the choir's concerts for over a decade. The performance was followed by a question-and-answer session in which the composer thanked the choir for trusting an unusual project and credited her colleagues' patience for keeping the music alive through several aborted rehearsal cycles.
+
+A recording of the premiere is being mastered by a regional public-radio station and is expected to be broadcast later this season as part of the station's ongoing series highlighting amateur composers.
+""",
+            imageURL: "https://picsum.photos/seed/demo9/600/400",
+            source: "Community Arts Bulletin",
+            category: "Entertainment",
+            publishedAt: ago(hours: 18),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(10),
+            title: "Volunteer Astronomy Group Confirms Discovery of New Variable Star",
+            excerpt: "An amateur astronomy collective documented and confirmed a previously uncatalogued variable star, with their measurements accepted by a major variable-star database.",
+            body: """
+A volunteer astronomy collective announced that an uncatalogued variable star they had been monitoring for the past eighteen months has been formally accepted into the principal international variable-star database. The acceptance follows independent confirmation from two amateur observatories and a final review by a professional astronomer who serves as a database referee.
+
+The star, identified during routine survey work by one of the group's members using a backyard 8-inch telescope, varies in brightness by approximately 0.4 magnitudes on a roughly 6.3-day cycle. The light curve is consistent with a particular subclass of pulsating variables, though additional spectroscopic work would be needed to confirm the classification.
+
+The collective's coordinator noted that volunteer-driven variable-star astronomy has a long history and remains one of the few areas of astronomical research in which non-professional observations contribute meaningfully to the published record. A new generation of inexpensive astronomical cameras has lowered the barrier to participation considerably.
+
+The group has begun coordinating with a graduate student at a university observatory who will attempt to obtain a spectrum of the star during her next observing run. Should that effort succeed, it would be cited alongside the discovery report in the database entry.
+""",
+            imageURL: "https://picsum.photos/seed/demo10/600/400",
+            source: "Amateur Astronomy Notes",
+            category: "Science",
+            publishedAt: ago(hours: 20),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(11),
+            title: "Mid-Sized City Adopts Open Standard for Civic Data Publication",
+            excerpt: "A mid-sized city's data office formally adopted an open civic-data standard for permits, budgets, and public-meeting records, joining a network of dozens of other municipalities.",
+            body: """
+The data office of a mid-sized city of roughly 180,000 residents has formally adopted an open civic-data publication standard for its permit records, budget filings, and public-meeting minutes. The adoption brings the city into a network of more than seventy other municipalities that publish records in a common machine-readable format.
+
+The director of the data office said the standard was chosen primarily for its low maintenance burden. The format is plain JSON with a small schema, and existing internal systems were able to produce conforming outputs with minor adjustments. The office was deliberate about not adopting a heavyweight platform that would require ongoing license costs.
+
+Civic-technology volunteers in the city have already begun building third-party tools on top of the published data. One early example is a permit-search interface that allows residents to look up the status of any building permit by address, which is a substantially faster experience than the city's existing internal portal.
+
+The data office plans to publish quarterly reports on access patterns and to adjust the published datasets as community feedback accumulates. A volunteer working group is assisting with the prioritization process.
+""",
+            imageURL: "https://picsum.photos/seed/demo11/600/400",
+            source: "Civic Tech Quarterly",
+            category: "Tech",
+            publishedAt: ago(hours: 22),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(12),
+            title: "Regional Farmers Market Launches Cooperative Cold-Chain Service",
+            excerpt: "Vendors at a regional farmers market have pooled resources to operate a shared refrigerated trailer, allowing smaller producers to reach buyers further from home.",
+            body: """
+Vendors at a regional farmers market have organized a cooperative cold-chain service in which a shared refrigerated trailer rotates among member farms during pickup days. The arrangement allows smaller producers — many of whom previously could not justify the cost of their own refrigerated transportation — to reach buyers further from their farms.
+
+The cooperative is owned by twelve participating farms, each of which contributed an equal share of the down payment on the trailer. Operating costs, including a part-time driver and fuel, are split based on each farm's monthly use. A simple booking system on a shared spreadsheet allocates trailer time, with conflicts resolved by rotation.
+
+In its first six months, the trailer has enabled at least three farms to begin supplying restaurants in a city about ninety minutes away — a distance that previously was logistically infeasible without compromising product quality. Two of those farms reported that the new restaurant accounts now make up a meaningful share of their weekly revenue.
+
+The cooperative is now considering whether to add a second trailer to handle peak-season demand and whether to expand membership to a few additional producers who have asked to join. A decision is expected at the cooperative's next quarterly meeting.
+""",
+            imageURL: "https://picsum.photos/seed/demo12/600/400",
+            source: "Local Food Economics",
+            category: "Business",
+            publishedAt: ago(hours: 26),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(13),
+            title: "Retired Teachers Launch Free After-School Reading Program",
+            excerpt: "A group of retired educators has organized a no-cost after-school reading program serving children in grades K-3 at a local community center.",
+            body: """
+A group of retired teachers has organized a no-cost after-school reading program for children in grades K-3, operating four afternoons a week at a local community center. The program serves about forty children at any given time, with a one-to-three ratio of trained volunteers to students.
+
+The program leans on the participating volunteers' decades of classroom experience but is structured to keep the atmosphere distinctly informal. Children rotate through brief reading sessions, a small-group game tied to the day's book, and a snack break during which volunteers chat with the kids about whatever they like. Parents and guardians have praised the model in surveys for the warmth of the environment.
+
+The program funds itself through a small grant from a local community foundation and through in-kind donations of books from the network of volunteers' former colleagues. Snack costs are covered by the community center as part of its broader after-school programming.
+
+Several of the volunteers have begun offering a once-monthly Saturday workshop for parents on supporting early reading at home. Demand for the workshop has consistently exceeded available seats since it began.
+""",
+            imageURL: "https://picsum.photos/seed/demo13/600/400",
+            source: "Community Education Notes",
+            category: "Politics",
+            publishedAt: ago(hours: 30),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(14),
+            title: "Independent Film Festival Highlights Documentaries from First-Time Directors",
+            excerpt: "A regional film festival's documentary track this year is composed entirely of first-time directors, with selections ranging from a study of small-town libraries to a profile of a community bicycle co-op.",
+            body: """
+A regional film festival's documentary track this year is composed entirely of first-time directors, a programming choice the festival's organizers describe as deliberate rather than accidental. The selections range widely in subject matter, from a study of small-town public libraries to a profile of a community bicycle cooperative.
+
+The festival received roughly 320 documentary submissions and selected fourteen for the program. The programming director said the selection emphasized works in which the director's relationship to the subject was clearly personal — films made because the director cared about the topic rather than because it was commercially obvious.
+
+Audience response on opening weekend was strong, with several screenings selling out and a number of post-screening discussions running well beyond their scheduled time. One first-time director, an elementary-school librarian, said the experience of watching her own film with a roomful of strangers had been disorienting in the best possible way.
+
+The festival's organizers are considering whether to maintain the first-time-director focus in future years or to reserve a portion of each future program for emerging filmmakers while opening the rest to all submissions. A decision will be made after the post-festival debrief.
+""",
+            imageURL: "https://picsum.photos/seed/demo14/600/400",
+            source: "Regional Arts Review",
+            category: "Entertainment",
+            publishedAt: ago(hours: 36),
+            bias: nil
+        ),
+
+        Article(
+            id: demoID(15),
+            title: "University Research Team Publishes Open Dataset of Soil-Health Measurements",
+            excerpt: "A multi-year research project has released its full soil-health dataset, comprising measurements from 240 agricultural plots across three watersheds.",
+            body: """
+A multi-year research project led by an applied-agriculture program has released its full soil-health dataset, comprising measurements from 240 agricultural plots across three watersheds. The release accompanies a peer-reviewed paper describing the methodology and headline findings, and is intended to enable secondary analyses by other researchers.
+
+The dataset covers four years of seasonal measurements including organic matter, microbial activity, water-holding capacity, and a panel of nutrient indicators. Plots represent a deliberate mix of conventional, no-till, and cover-cropped management approaches, with consistent measurement protocols across all sites.
+
+The lead author noted that the original published analysis answers only a small fraction of the questions the dataset can support. Releasing the full data is intended to invite other researchers to investigate questions outside the original team's scope, particularly around the interaction of management practices with local climate variability.
+
+A small documentation team has been funded to maintain the dataset and respond to questions for at least the next three years, after which long-term archival hosting will be transferred to a regional agricultural data repository.
+""",
+            imageURL: "https://picsum.photos/seed/demo15/600/400",
+            source: "Open Agricultural Science",
+            category: "Science",
+            publishedAt: ago(hours: 44),
+            bias: nil
+        ),
+    ]
+
     static let articles: [Article] = [
 
         // MARK: - Tech (4)
